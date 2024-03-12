@@ -32,7 +32,6 @@ const RegisterForm = () => {
   const onSubmit = (data: IFormInput) => console.log(data);
 
   return (
-    // <form onSubmit={(data)=>onSubmit(data)}>
     <Box>
       <Stack mb={3}>
         <Typography
@@ -103,17 +102,14 @@ const RegisterForm = () => {
         variant="contained"
         size="small"
         fullWidth
+        sx={{ marginBottom: '5px'}}
       >
         Sign Up
       </Button>
-      <Button onClick={() => reset()} variant="outlined" size="small" fullWidth>
+      <Button onClick={() => reset()} variant="outlined" size="small" fullWidth sx={{ marginTop: '5px'}}>
         Reset
       </Button>
-      {/* <Button color="primary" variant="contained" size="large" fullWidth component={Link} to="/auth/login"> */}
-      {/* Sign Up */}
-      {/* </Button> */}
     </Box>
-    // </form>
   );
 };
 
