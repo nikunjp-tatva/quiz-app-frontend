@@ -12,11 +12,11 @@ export const sidebarItems = [
     icon: Home,
     href: '/',
   },
-  {
-    name: 'Users',
-    icon: People,
-    href: '/users',
-  },
+  //   {
+  //     name: 'Users',
+  //     icon: People,
+  //     href: '/users',
+  //   },
   {
     name: 'Technologies',
     icon: RateReview,
