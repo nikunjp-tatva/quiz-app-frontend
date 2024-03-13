@@ -27,9 +27,9 @@ export const sidebarItems = [
     icon: QuestionAnswer,
     href: '/questions',
   },
-  {
-    name: 'Global Settings',
-    icon: Settings,
-    href: '/settings',
-  },
+  //   {
+  //     name: 'Global Settings',
+  //     icon: Settings,
+  //     href: '/settings',
+  //   },
 ];
