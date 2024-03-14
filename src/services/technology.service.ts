@@ -4,11 +4,21 @@ import authHeader from './authHeader';
 const API_URL = 'http://localhost:3001/v1/technologies/';
 
 export function addTechnology(data: any) {
-  return axios.post(API_URL, { headers: authHeader(), body: data });
+  return axios.post(
+    API_URL,
+    {
+      name: data.name,
+      description: data.description || undefined,
+      noOfQuestion: data.noOfQuestion,
+      duration: data.duration,
+      cutOff: data.cutOff,
+    },
+    { headers: authHeader() }
+  );
 }
 
-export function getTechnologies(params: any) {
-  return axios.get(API_URL, { headers: authHeader(), params });
+export function getTechnologies() {
+  return axios.get(API_URL, { headers: authHeader() });
 }
 
 export function getTechnologyById(technologyId: string) {
@@ -16,10 +26,13 @@ export function getTechnologyById(technologyId: string) {
 }
 
 export function updateTechnologyById(technologyId: string, data: any) {
-  return axios.patch(API_URL + technologyId, {
-    headers: authHeader(),
-    body: data,
-  });
+  return axios.patch(
+    API_URL + technologyId,
+    {
+      ...data,
+    },
+    { headers: authHeader() }
+  );
 }
 
 export function getTechnologiesList() {

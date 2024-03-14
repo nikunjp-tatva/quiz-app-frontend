@@ -4,11 +4,11 @@ import authHeader from './authHeader';
 const API_URL = 'http://localhost:3001/v1/questions/';
 
 export function addQuestion(data: any) {
-  return axios.post(API_URL, { headers: authHeader(), body: data });
+  return axios.post(API_URL, { ...data }, { headers: authHeader() });
 }
 
-export function getQuestions(params: any) {
-  return axios.get(API_URL, { headers: authHeader(), params });
+export function getQuestions() {
+  return axios.get(API_URL, { headers: authHeader() });
 }
 
 export function getQuestionById(questionId: string) {
@@ -16,8 +16,9 @@ export function getQuestionById(questionId: string) {
 }
 
 export function updateQuestionById(questionId: string, data: any) {
-  return axios.patch(API_URL + questionId, {
-    headers: authHeader(),
-    body: data,
-  });
+  return axios.patch(
+    API_URL + questionId,
+    { ...data },
+    { headers: authHeader() }
+  );
 }

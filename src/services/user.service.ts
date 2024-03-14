@@ -8,7 +8,7 @@ export function getUserDetails() {
 }
 
 export function updateUserDetails(data: any) {
-  return axios.patch(API_URL + 'me', { headers: authHeader(), body: data });
+  return axios.patch(API_URL + 'me', { ...data }, { headers: authHeader() });
 }
 
 export async function checkToken() {

@@ -4,15 +4,15 @@ import authHeader from './authHeader';
 const API_URL = 'http://localhost:3001/v1/exams/';
 
 export function saveExamResult(data: any) {
-  return axios.post(API_URL + 'result', { headers: authHeader(), body: data });
+  return axios.post(API_URL + 'result', { ...data }, { headers: authHeader() });
 }
 
-export function getSubmittedExamsOfUser(params: any) {
-  return axios.get(API_URL + 'list', { headers: authHeader(), params });
+export function getSubmittedExamsOfUser() {
+  return axios.get(API_URL + 'list', { headers: authHeader() });
 }
 
-export function getAllExamSummary(params: any) {
-  return axios.get(API_URL + 'summary', { headers: authHeader(), params });
+export function getAllExamSummary() {
+  return axios.get(API_URL + 'summary', { headers: authHeader() });
 }
 
 export function getExamResultDetails(technologyId: string) {
