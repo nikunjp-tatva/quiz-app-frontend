@@ -13,8 +13,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import InfoTextIcon from '../../common/InfoTextIcon';
+import {
+    convertOptionStringToArray,
+    convertOptionsArrayToString,
+    validateQuestion
+} from './questionValidtion';
 
-type QuestionType = {
+export type QuestionType = {
     id: string;
     technology: string;
     questionText: string;
@@ -327,66 +332,3 @@ const Question = () => {
 };
 
 export default Question;
-
-const validateRequired = (value: string) => !!value.length;
-
-function validateQuestion(data: QuestionType) {
-    return {
-        technology: !validateRequired(data.technology)
-            ? 'Technology Name is Required'
-            : '',
-        questionText: !validateRequired(data.questionText)
-            ? 'Question text is Required'
-            : '',
-        options: optionValidation(data.options),
-        correctOption: correctOptionValidation(data.correctOption, data.options),
-    };
-}
-
-function correctOptionValidation(correctOption: string, options: string[] | string) {
-    if (!correctOption || correctOption === '') {
-        return `Correct Option is Required`;
-    }
-
-    const optionsValidationResponse = optionValidation(options);
-
-    if (optionsValidationResponse !== '') {
-        return optionsValidationResponse;
-    }
-
-    if (typeof options === 'string') {
-        options = convertOptionStringToArray(options);
-
-        return options.includes(correctOption.trim()) ? '' : 'This text is not included in options';
-    }
-
-    return '';
-}
-
-function optionValidation(options: string[] | string) {
-    console.log({ options });
-    if (!options || options === '') {
-        return `Options is Required`;
-    }
-
-    if (typeof options === 'string') {
-        options = convertOptionStringToArray(options);
-
-        if (!options?.length) {
-            return 'Enter valid options string'
-        }
-    }
-
-    return '';
-}
-
-function convertOptionsArrayToString(optionsArray: string[]) {
-    return optionsArray?.join(", ");
-}
-
-function convertOptionStringToArray(optionsString: string) {
-    return optionsString?.split(",").map((option) => option.trim()).filter((option) => !!option);
-}
-
-
-
