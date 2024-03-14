@@ -1,19 +1,22 @@
-import React, { useCallback } from "react";
+import React, { useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 import { FormInputText } from "../../../common/form-component/FormInputText";
 import { FormInputRadio } from "../../../common/form-component/FormInputRadio";
-import { FormInputDropdown } from "../../../common/form-component/FormInputDropdown";
 import HelperText from "../../../common/HelperText";
+import { registerValidationSchema } from "../validationSchema/registerSchema";
+import { useYupValidationResolver } from "../../../helpers/yupValidation.helper";
+import { register, setUserSession } from "../../../services/auth.service";
+import TechnologyList from "../component/TechnologyList";
 
-interface IFormInput {
+interface IRegisterFormInput {
     name: string;
     email: string;
     password: string;
     role: string;
-    selectedTechnology: string[];
+    technologies: string[];
 }
 
 const defaultValues = {
@@ -21,62 +24,18 @@ const defaultValues = {
     email: "",
     password: "",
     role: "user",
-    selectedTechnology: [],
+    technologies: [],
 };
 
-const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    password: Yup.string().required('Password is required').matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])(?=.{8,})/,
-        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
-    ),
-    role: Yup.string().oneOf(['user', 'admin'], 'You must select a role').required('Role is required'),
-
-    selectedTechnology: Yup.array()
-        .when('role', ([role], schema) => {
-            if (role === 'user') {
-                return schema.of(Yup.string()).min(1, 'One technology is required');
-            }
-            return schema.notRequired();
-        }
-        ),
-});
-
-const useYupValidationResolver = (validationSchema: Yup.ObjectSchema<{ email: string; password: string; }, Yup.AnyObject, { email: undefined; password: undefined; }, "">) =>
-    useCallback(
-        async (data: any) => {
-            try {
-                const values = await validationSchema.validate(data, {
-                    abortEarly: false,
-                })
-
-                return {
-                    values,
-                    errors: {},
-                }
-            } catch (errors: any) {
-                return {
-                    values: {},
-                    errors: errors.inner.reduce(
-                        (allErrors: any, currentError: { path: any; type: any; message: any; }) => ({
-                            ...allErrors,
-                            [currentError.path]: {
-                                type: currentError.type ?? "validation",
-                                message: currentError.message,
-                            },
-                        }),
-                        {}
-                    ),
-                }
-            }
-        },
-        [validationSchema]
-    )
 const RegisterForm = () => {
-    const resolver = useYupValidationResolver(validationSchema)
+    const history = useNavigate();
 
-    const { handleSubmit, reset, control, setValue, watch, formState: { errors } } = useForm<IFormInput>(
+    const [error, setError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const resolver = useYupValidationResolver(registerValidationSchema)
+
+    const { handleSubmit, reset, control, watch, formState: { errors } } = useForm<IRegisterFormInput>(
         {
             defaultValues,
             resolver
@@ -84,7 +43,24 @@ const RegisterForm = () => {
     );
 
     const role = watch("role");
-    const onSubmit = (data: IFormInput) => console.log(data);
+
+    const onSubmit = async (data: IRegisterFormInput) => {
+        try {
+            setError('');
+            setLoading(true);
+            const userDetails = await register(data);
+
+            setLoading(false);
+            setUserSession(userDetails.accessToken, userDetails.user);
+
+            history('/dashboard');
+        } catch (error: any) {
+            setLoading(false);
+            console.log({ error: error });
+            if (error?.response?.status === 400) setError(error?.response?.data?.message);
+            else setError("Something went wrong. Please try again later.");
+        }
+    };
 
     return (
 
@@ -137,29 +113,18 @@ const RegisterForm = () => {
                 </Typography>
                 <FormInputRadio name="role" control={control} />
 
-                {role === "user" && (
-                    <>
-                        <Typography
-                            variant="subtitle1"
-                            fontWeight={600}
-                            component="label"
-                            htmlFor="selectedTechnology"
-                            mb="5px"
-                            mt="25px"
-                        >
-                            Technologies
-                        </Typography>
-                        <FormInputDropdown name="selectedTechnology" control={control} />
-                        {errors.selectedTechnology && <HelperText isError={true} message={errors.selectedTechnology.message} />}
-                    </>
-                )}
+                {role === "user" && <TechnologyList control={control} errors={errors} />}
             </Stack>
+
+            {error && <HelperText isError={true} message={error} style={{ 'fontSize': '1rem' }} />}<br />
+
             <Button
                 onClick={handleSubmit(onSubmit)}
                 variant="contained"
                 size="small"
                 fullWidth
                 sx={{ marginBottom: '5px' }}
+                disabled={loading}
             >
                 Sign Up
             </Button>

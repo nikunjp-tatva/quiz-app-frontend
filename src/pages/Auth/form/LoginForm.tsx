@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import { FormInputText } from "../../../common/form-component/FormInputText";
 import { useYupValidationResolver } from "../../../helpers/yupValidation.helper";
 import { loginValidationSchema } from "../validationSchema/loginSchema";
-import { login } from "../../../services/auth.service";
+import { login, setUserSession } from "../../../services/auth.service";
 import HelperText from "../../../common/HelperText";
 
 interface ILoginFormInput {
@@ -19,6 +20,8 @@ const defaultValues = {
 };
 
 const LoginForm = () => {
+    const history = useNavigate();
+
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -35,15 +38,12 @@ const LoginForm = () => {
         try {
             setError('');
             setLoading(true);
-            const response = await login(data.email, data.password);
+            const userDetails = await login(data.email, data.password);
             setLoading(false);
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
 
-            const responseData = await response.json();
-            console.log(responseData);
-            // history('/dashboard');
+            setUserSession(userDetails.accessToken, userDetails.user);
+
+            history('/dashboard');
         } catch (error: any) {
             setLoading(false);
             console.log({ error: error });
