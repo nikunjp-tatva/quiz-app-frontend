@@ -21,6 +21,7 @@ const Router = [
         children: [
             { path: "/technologies", element: (<Sidebar><Technology /></Sidebar>) },
             { path: "/questions", element: (<Sidebar><Question /></Sidebar>) },
+            { path: "/dashboard", element: (<Sidebar />) },
         ],
     },
 ];
