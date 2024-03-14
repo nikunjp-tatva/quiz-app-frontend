@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
-import { Box, Button, FormHelperText, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import * as Yup from 'yup';
 
 import { FormInputText } from "../../../common/form-component/FormInputText";
 import { FormInputRadio } from "../../../common/form-component/FormInputRadio";
 import { FormInputDropdown } from "../../../common/form-component/FormInputDropdown";
+import HelperText from "../../../common/HelperText";
 
 interface IFormInput {
     name: string;
@@ -149,7 +150,7 @@ const RegisterForm = () => {
                             Technologies
                         </Typography>
                         <FormInputDropdown name="selectedTechnology" control={control} />
-                        {errors.selectedTechnology && <FormHelperText error>{errors.selectedTechnology.message}</FormHelperText>}
+                        {errors.selectedTechnology && <HelperText isError={true} message={errors.selectedTechnology.message} />}
                     </>
                 )}
             </Stack>

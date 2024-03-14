@@ -1,11 +1,14 @@
-import React, { useCallback } from "react";
+import React, { useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import * as Yup from 'yup';
 
 import { FormInputText } from "../../../common/form-component/FormInputText";
+import { useYupValidationResolver } from "../../../helpers/yupValidation.helper";
+import { loginValidationSchema } from "../validationSchema/loginSchema";
+import { login } from "../../../services/auth.service";
+import HelperText from "../../../common/HelperText";
 
-interface IFormInput {
+interface ILoginFormInput {
     email: string;
     password: string;
 }
@@ -15,53 +18,39 @@ const defaultValues = {
     password: "",
 };
 
-const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    password: Yup.string().required('Password is required').min(4),
-});
-
-const useYupValidationResolver = (validationSchema: Yup.ObjectSchema<{ email: string; password: string; }, Yup.AnyObject, { email: undefined; password: undefined; }, "">) =>
-    useCallback(
-        async (data: any) => {
-            try {
-                const values = await validationSchema.validate(data, {
-                    abortEarly: false,
-                })
-
-                return {
-                    values,
-                    errors: {},
-                }
-            } catch (errors: any) {
-                return {
-                    values: {},
-                    errors: errors.inner.reduce(
-                        (allErrors: any, currentError: { path: any; type: any; message: any; }) => ({
-                            ...allErrors,
-                            [currentError.path]: {
-                                type: currentError.type ?? "validation",
-                                message: currentError.message,
-                            },
-                        }),
-                        {}
-                    ),
-                }
-            }
-        },
-        [validationSchema]
-    )
-
 const LoginForm = () => {
-    const resolver = useYupValidationResolver(validationSchema)
+    const [error, setError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const { handleSubmit, reset, control, setValue, watch } = useForm<IFormInput>(
+    const resolver = useYupValidationResolver(loginValidationSchema)
+
+    const { handleSubmit, control } = useForm<ILoginFormInput>(
         {
             defaultValues,
             resolver,
         },
     );
 
-    const onSubmit = (data: IFormInput) => console.log(data);
+    const onSubmit = async (data: ILoginFormInput) => {
+        try {
+            setError('');
+            setLoading(true);
+            const response = await login(data.email, data.password);
+            setLoading(false);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const responseData = await response.json();
+            console.log(responseData);
+            // history('/dashboard');
+        } catch (error: any) {
+            setLoading(false);
+            console.log({ error: error });
+            if (error?.response?.status === 401) setError(error?.response?.data?.message);
+            else setError("Something went wrong. Please try again later.");
+        }
+    };
 
     return (
         <Box>
@@ -76,7 +65,7 @@ const LoginForm = () => {
                 >
                     Email Address
                 </Typography>
-                <FormInputText name="email" control={control} type="email" />
+                <FormInputText name="email" control={control} type="email" clearError={() => setError('')} />
 
                 <Typography
                     variant="subtitle1"
@@ -88,13 +77,17 @@ const LoginForm = () => {
                 >
                     Password
                 </Typography>
-                <FormInputText name="password" control={control} type="password" />
+                <FormInputText name="password" control={control} type="password" clearError={() => setError('')} />
             </Stack>
+
+            {error && <HelperText isError={true} message={error} style={{ 'fontSize': '1rem' }} />}<br />
+
             <Button
                 onClick={handleSubmit(onSubmit)}
                 variant="contained"
                 size="small"
                 fullWidth
+                disabled={loading}
             >
                 Sign In
             </Button>

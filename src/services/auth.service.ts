@@ -2,39 +2,33 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3001/v1/auth/';
 
-export function login(email: string, password: string) {
-  return axios
-    .post(API_URL + 'register', {
-      email,
-      password,
-    })
-    .then((response: { data: { accessToken: { token: string } } }) => {
-      if (response.data.accessToken.token) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-      }
-
-      return response.data;
-    });
+export async function login(email: string, password: string) {
+  const response = await axios.post(API_URL + 'login', {
+    email,
+    password,
+  });
+  if (response.data.accessToken.token) {
+    localStorage.setItem('user', JSON.stringify(response.data));
+  }
+  return response.data;
 }
 
 export function logout() {
   localStorage.removeItem('user');
 }
 
-export function register(
-  name: string,
-  email: string,
-  password: string,
-  role: string,
-  selectedTechnology: string[]
-) {
-  return axios.post(API_URL + 'signup', {
-    name,
-    email,
-    password,
-    role,
-    selectedTechnology,
-  });
+export async function register(data: {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  selectedTechnology: string[];
+}) {
+  const response = await axios.post(API_URL + 'register', data);
+  if (response.data.accessToken.token) {
+    localStorage.setItem('user', JSON.stringify(response.data));
+  }
+  return response.data;
 }
 
 export function getCurrentUser() {
