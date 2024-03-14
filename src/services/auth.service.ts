@@ -7,9 +7,6 @@ export async function login(email: string, password: string) {
     email,
     password,
   });
-  if (response.data.accessToken.token) {
-    localStorage.setItem('user', JSON.stringify(response.data));
-  }
   return response.data;
 }
 
@@ -21,9 +18,6 @@ export async function register(data: {
   technologies: string[];
 }) {
   const response = await axios.post(API_URL + 'register', data);
-  if (response.data.accessToken.token) {
-    localStorage.setItem('user', JSON.stringify(response.data));
-  }
   return response.data;
 }
 

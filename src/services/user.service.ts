@@ -10,3 +10,7 @@ export function getUserDetails() {
 export function updateUserDetails(data: any) {
   return axios.patch(API_URL + 'me', { headers: authHeader(), body: data });
 }
+
+export async function checkToken() {
+  return await axios.get(API_URL + 'checkToken', { headers: authHeader() });
+}
