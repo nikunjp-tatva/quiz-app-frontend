@@ -3,26 +3,16 @@ import { FormControl, MenuItem, Select } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { FormInputProps } from "./FormInputProps";
 
-const options = [
-    {
-        label: "ReactJS",
-        value: "react",
-    },
-    {
-        label: "NodeJS",
-        value: "nodejs",
-    },
-];
-
 export const FormInputDropdown: React.FC<FormInputProps> = ({
     name,
     control,
+    values
 }) => {
     const generateSingleOptions = () => {
-        return options.map((option: any) => {
+        return values?.map((option: any) => {
             return (
-                <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                <MenuItem key={option.id} value={option.id}>
+                    {option.name}
                 </MenuItem>
             );
         });

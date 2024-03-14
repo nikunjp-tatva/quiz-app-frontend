@@ -21,3 +21,7 @@ export function updateTechnologyById(technologyId: string, data: any) {
     body: data,
   });
 }
+
+export function getTechnologiesList() {
+  return axios.get(API_URL + 'list');
+}

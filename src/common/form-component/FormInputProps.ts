@@ -5,4 +5,5 @@ export interface FormInputProps {
   setValue?: any;
   type?: string;
   clearError?: Function;
+  values?: object[];
 }

@@ -13,16 +13,12 @@ export async function login(email: string, password: string) {
   return response.data;
 }
 
-export function logout() {
-  localStorage.removeItem('user');
-}
-
 export async function register(data: {
   name: string;
   email: string;
   password: string;
   role: string;
-  selectedTechnology: string[];
+  technologies: string[];
 }) {
   const response = await axios.post(API_URL + 'register', data);
   if (response.data.accessToken.token) {
@@ -31,9 +27,24 @@ export async function register(data: {
   return response.data;
 }
 
-export function getCurrentUser() {
-  const userStr = localStorage.getItem('user');
+export const getUser = () => {
+  const userStr = sessionStorage.getItem('user');
   if (userStr) return JSON.parse(userStr);
+  else return null;
+};
 
-  return null;
-}
+export const getToken = () => {
+  const tokenStr = sessionStorage.getItem('token');
+  if (tokenStr) return JSON.parse(tokenStr).token;
+  else return null;
+};
+
+export const removeUserSession = () => {
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('user');
+};
+
+export const setUserSession = (token: string, user: any) => {
+  sessionStorage.setItem('token', JSON.stringify(token));
+  sessionStorage.setItem('user', JSON.stringify(user));
+};
