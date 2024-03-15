@@ -9,6 +9,8 @@ const Sidebar = lazy(() => import("../common/layouts/sidebar/Sidebar"));
 const Technology = lazy(() => import("../pages/Technology/Technology"));
 const Question = lazy(() => import("../pages/Question/Question"));
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
+const StudentDashboard = lazy(() => import("../pages/StudentDashboard/StudentDashboard"));
+const ExamBoard = lazy(() => import("../pages/ExamBoard/ExamBoard"));
 
 const Router = [
     {
@@ -29,8 +31,8 @@ const Router = [
     {
         path: "/",
         children: [
-            { path: "/home", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar></Sidebar>)} /> },
-            { path: "/exams", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar></Sidebar>)} /> },
+            { path: "/home", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><StudentDashboard /></Sidebar>)} /> },
+            { path: "/exams", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
         ],
     },
 ];

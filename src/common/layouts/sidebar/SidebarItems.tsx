@@ -56,7 +56,7 @@ export default function SidebarItems() {
                                 textDecoration: 'none',
                                 color: '#fff',
                                 ...(location.pathname === data.href && {
-                                    backgroundColor: '#495159',
+                                    backgroundColor: '#0c5297',
                                     color: '#FFF',
                                     stroke: '#FFF',
                                 }),
