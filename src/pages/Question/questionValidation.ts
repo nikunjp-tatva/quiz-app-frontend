@@ -1,6 +1,6 @@
-import { QuestionType } from "./Question";
+import { QuestionType } from './Question';
 
-const validateRequired = (value: string) => !!value.length;
+const validateRequired = (value: string) => !!value?.length;
 
 export function validateQuestion(data: QuestionType) {
   return {
@@ -41,7 +41,6 @@ function correctOptionValidation(
 }
 
 function optionValidation(options: string[] | string) {
-  console.log({ options });
   if (!options || options === '') {
     return `Options is Required`;
   }

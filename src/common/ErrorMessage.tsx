@@ -1,0 +1,20 @@
+import React from 'react';
+import { Box, Typography } from '@mui/material'
+
+export default function ErrorMessage({ message }: Readonly<{ message: string }>) {
+    return (
+        <Box component="section" sx={{ padding: "10px" }}>
+            <Typography
+                fontWeight={600}
+                variant="subtitle1"
+                component="p"
+                sx={{ flexGrow: 1, backgroundColor: 'error.main', }}
+                textAlign="center"
+                color="#fff"
+            >
+                Error: {message}
+            </Typography>
+        </Box>
+    );
+}
+

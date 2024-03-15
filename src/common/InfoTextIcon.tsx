@@ -8,7 +8,7 @@ export default function InfoTextIcon({ headerName, titleText }: Readonly<{ heade
         <>
             {headerName}
             <Tooltip title={titleText}>
-                <IconButton size="small">
+                <IconButton size="small" sx={{ marginTop: '-6px' }}>
                     <Info />
                 </IconButton>
             </Tooltip>
