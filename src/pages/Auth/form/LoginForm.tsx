@@ -8,6 +8,7 @@ import { useYupValidationResolver } from "../../../helpers/yupValidation.helper"
 import { loginValidationSchema } from "../validationSchema/loginSchema";
 import { login, setUserSession } from "../../../services/auth.service";
 import HelperText from "../../../common/HelperText";
+import roles from "../../../config/Roles";
 
 interface ILoginFormInput {
     email: string;
@@ -43,7 +44,9 @@ const LoginForm = () => {
 
             setUserSession(userDetails.accessToken, userDetails.user);
 
-            history('/dashboard');
+            const userRole = userDetails?.user?.role;
+
+            history(userRole === roles.EXAMINER ? '/dashboard' : '/home');
         } catch (error: any) {
             setLoading(false);
             console.log({ error: error });

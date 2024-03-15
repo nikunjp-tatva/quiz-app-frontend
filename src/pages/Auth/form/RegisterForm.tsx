@@ -10,6 +10,7 @@ import { registerValidationSchema } from "../validationSchema/registerSchema";
 import { useYupValidationResolver } from "../../../helpers/yupValidation.helper";
 import { register, setUserSession } from "../../../services/auth.service";
 import TechnologyList from "../component/TechnologyList";
+import roles from "../../../config/Roles";
 
 interface IRegisterFormInput {
     name: string;
@@ -53,7 +54,9 @@ const RegisterForm = () => {
             setLoading(false);
             setUserSession(userDetails.accessToken, userDetails.user);
 
-            history('/dashboard');
+            const userRole = userDetails?.user?.role;
+
+            history(userRole === roles.EXAMINER ? '/dashboard' : '/home');
         } catch (error: any) {
             setLoading(false);
             console.log({ error: error });

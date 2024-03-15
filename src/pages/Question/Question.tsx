@@ -3,21 +3,24 @@ import {
     MaterialReactTable,
     useMaterialReactTable,
     type MRT_ColumnDef,
-    type MRT_ColumnFiltersState,
-    type MRT_PaginationState,
-    type MRT_SortingState,
     MRT_EditActionButtons,
+    MRT_Row,
 } from 'material-react-table';
 import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import { useNavigate } from 'react-router-dom';
+
 import InfoTextIcon from '../../common/InfoTextIcon';
 import {
     convertOptionStringToArray,
     convertOptionsArrayToString,
     validateQuestion
-} from './questionValidtion';
+} from './questionValidation';
+import { addQuestion, getQuestions, updateQuestionById } from '../../services/question.service';
+import { getTechnologiesList } from '../../services/technology.service';
+import ErrorMessage from '../../common/ErrorMessage';
 
 export type QuestionType = {
     id: string;
@@ -27,56 +30,21 @@ export type QuestionType = {
     correctOption: string;
 };
 
-type QuestionApiResponse = {
-    data: Array<QuestionType>;
-    meta: {
-        totalRowCount: number;
-    };
+const CustomSelectEditor = (row: MRT_Row<QuestionType>, technologyList: any[]) => {
+    return (
+        <div>{technologyList.find((item) => item.value === row.original.technology)?.label}</div>
+    );
 };
 
-const iniData: QuestionType[] = [
-    {
-        id: '1',
-        technology: "React JS",
-        questionText: "React JS is library",
-        options: ["Yes", "No"],
-        correctOption: "Yes",
-    },
-    {
-        id: '2',
-        technology: "Nest JS",
-        questionText: "Nest JS is library",
-        options: ["Yes", "No"],
-        correctOption: "No",
-    },
-    {
-        id: '3',
-        technology: "Node JS",
-        questionText: "Node JS is Framework",
-        options: ["Yes", "No"],
-        correctOption: "Yes",
-    },
-];
-
 const Question = () => {
+    const history = useNavigate();
 
-    //data and fetching state
-    const [data, setData] = useState<QuestionType[]>(iniData);
+    const [data, setData] = useState<QuestionType[]>([]);
     const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isRefetching, setIsRefetching] = useState(false);
-    const [rowCount, setRowCount] = useState(0);
-
-    //table state
-    const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
-        [],
-    );
-    const [globalFilter, setGlobalFilter] = useState('');
-    const [sorting, setSorting] = useState<MRT_SortingState>([]);
-    const [pagination, setPagination] = useState<MRT_PaginationState>({
-        pageIndex: 0,
-        pageSize: 10,
-    });
+    const [technologyList, setTechnologyList] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -86,27 +54,25 @@ const Question = () => {
                 setIsRefetching(true);
             }
 
-            const url = new URL(
-                '/api/data',
-                'http://localhost:3000',
-            );
-            url.searchParams.set(
-                'start',
-                `${pagination.pageIndex * pagination.pageSize}`,
-            );
-            url.searchParams.set('size', `${pagination.pageSize}`);
-            url.searchParams.set('filters', JSON.stringify(columnFilters ?? []));
-            url.searchParams.set('globalFilter', globalFilter ?? '');
-            url.searchParams.set('sorting', JSON.stringify(sorting ?? []));
-
             try {
-                const response = await fetch(url.href);
-                const json = (await response.json()) as QuestionApiResponse;
-                setData(json.data);
-                setRowCount(json.meta.totalRowCount);
-            } catch (error) {
-                setIsError(true);
+                const response = await getQuestions();
+                const questionList = response?.data?.results?.map((question: any) => ({
+                    id: question.id,
+                    questionText: question.questionText,
+                    technology: question?.technology?.id,
+                    options: question?.options,
+                    correctOption: question?.correctOption
+                }));
+                setData(questionList);
+            } catch (error: any) {
+                if (error?.response?.status === 401) {
+                    history('/auth/login');
+                }
+                if (error?.response?.status === 403) {
+                    history('/auth/login');
+                }
                 setIsLoading(false);
+                setIsError(true);
                 console.error(error);
                 return;
             }
@@ -114,15 +80,18 @@ const Question = () => {
             setIsLoading(false);
             setIsRefetching(false);
         };
-        // fetchData();
+
+        getTechnologiesList().then(({ data }) => {
+            setTechnologyList(data.map((item: { name: string; id: string; }) => ({
+                label: item.name,
+                value: item.id
+            })));
+
+            fetchData();
+        });
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        columnFilters, //re-fetch when column filters change
-        globalFilter, //re-fetch when global filter changes
-        pagination.pageIndex, //re-fetch when page index changes
-        pagination.pageSize, //re-fetch when page size changes
-        sorting, //re-fetch when sorting changes
-    ]);
+    }, []);
 
     const [validationErrors, setValidationErrors] = useState<
         Record<string, string | undefined>
@@ -139,10 +108,12 @@ const Question = () => {
                 Edit: () => null,
             },
             {
-                accessorKey: 'technology',
-                header: 'Technology',
+                id: 'technology',
+                accessorFn: (row) => technologyList.find((item) => item.value === row.technology)?.value,
+                Cell: ({ row }) => CustomSelectEditor(row, technologyList),
+                header: 'Technology Name',
                 editVariant: 'select',
-                editSelectOptions: ["React JS", "Node JS", "Nest JS"],
+                editSelectOptions: technologyList,
                 size: 150,
                 enableHiding: false,
                 muiEditTextFieldProps: {
@@ -155,6 +126,7 @@ const Question = () => {
                             ...validationErrors,
                             technology: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
             {
@@ -172,13 +144,14 @@ const Question = () => {
                             ...validationErrors,
                             questionText: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
             {
                 accessorKey: 'options',
                 header: (<InfoTextIcon headerName="Options" titleText='Enter in string with "," separated. Eg. (Yes, No, All)' />),
                 accessorFn: (row) => {
-                    if (typeof row?.options === 'object' && row.options.length > 0) {
+                    if (typeof row?.options === 'object' && row?.options?.length) {
                         return convertOptionsArrayToString(row.options);
                     }
                     return row.options;
@@ -193,11 +166,12 @@ const Question = () => {
                             ...validationErrors,
                             options: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
             {
                 accessorKey: 'correctOption',
-                header: (<InfoTextIcon headerName="Correct Option" titleText='Enter string that exists in options' />),
+                header: 'Correct Option',
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -209,10 +183,11 @@ const Question = () => {
                             ...validationErrors,
                             correctOption: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
         ],
-        [validationErrors],
+        [technologyList, validationErrors],
     );
 
     const table = useMaterialReactTable({
@@ -222,9 +197,17 @@ const Question = () => {
         editDisplayMode: 'modal',
         createDisplayMode: 'modal',
         positionActionsColumn: 'last',
+        enableDensityToggle: false,
+        enableFullScreenToggle: false,
+        enableColumnFilters: false,
 
-        onEditingRowCancel: () => setValidationErrors({}),
-        onEditingRowSave: ({ table, values }) => {
+        enableColumnActions: false,
+        // enablePagination: false,
+        // enableSorting: false,
+        muiTableBodyRowProps: { hover: false },
+
+        onEditingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onEditingRowSave: async ({ table, values }) => {
 
             const newValidationErrors = validateQuestion(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
@@ -234,18 +217,39 @@ const Question = () => {
 
             setValidationErrors({});
 
-            setData(prev => prev.map((item) => {
-                if (item.id === values.id) {
-                    values.options = convertOptionStringToArray(values.options);
-                    return values;
+            const updatedValues = { ...values };
+            updatedValues.options = convertOptionStringToArray(values.options);
+
+            const updateQuestion = async () => {
+                setErrorMessage('');
+                try {
+                    await updateQuestionById(values.id, updatedValues);
+                    setData(prev => prev.map((item) => {
+                        if (item.id === values.id) {
+                            values.options = convertOptionStringToArray(values.options);
+                            return values;
+                        }
+                        return item;
+                    }));
+                    table.setEditingRow(null); //exit editing mode
+                } catch (error: any) {
+                    if (error?.response?.status === 401) {
+                        history('/auth/login');
+                    }
+                    if (error?.response?.status === 403) {
+                        history('/auth/login');
+                    }
+                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    console.error(error);
+                    return;
                 }
-                return item;
-            }))
-            table.setEditingRow(null); //exit editing mode
+                setErrorMessage('');
+            };
+            await updateQuestion();
 
         },
-        onCreatingRowCancel: () => setValidationErrors({}),
-        onCreatingRowSave: ({ table, values }) => {
+        onCreatingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onCreatingRowSave: async ({ table, values }) => {
 
             const newValidationErrors = validateQuestion(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
@@ -254,34 +258,45 @@ const Question = () => {
             }
             setValidationErrors({});
 
-            setData([...data, values]);
+            const updatedValues = { ...values };
+            updatedValues.options = convertOptionStringToArray(values.options);
 
-            table.setCreatingRow(null); //exit creating mode
+            const addQuestionToData = async () => {
+                setErrorMessage('');
+                try {
+                    const addedData = await addQuestion({ ...updatedValues, id: undefined });
+                    setData([...data, addedData.data]);
+                    table.setCreatingRow(null); //exit creating mode
+                } catch (error: any) {
+                    if (error?.response?.status === 401) {
+                        history('/auth/login');
+                    }
+                    if (error?.response?.status === 403) {
+                        history('/auth/login');
+                    }
+                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    console.error(error);
+                    return;
+                }
+                setErrorMessage('');
+            };
+            await addQuestionToData();
+
         },
 
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },
-        // manualFiltering: true,
-        // manualPagination: true,
-        // manualSorting: true,
+
         muiToolbarAlertBannerProps: isError
             ? {
                 color: 'error',
                 children: 'Error loading data',
             }
             : undefined,
-        // onColumnFiltersChange: setColumnFilters,
-        onGlobalFilterChange: setGlobalFilter,
-        onPaginationChange: setPagination,
-        onSortingChange: setSorting,
-        rowCount,
+
         state: {
-            columnFilters,
-            globalFilter,
             isLoading,
-            pagination,
             showAlertBanner: isError,
             showProgressBars: isRefetching,
-            sorting,
         },
         renderTopToolbarCustomActions: ({ table }) => (
             <Button
@@ -294,10 +309,11 @@ const Question = () => {
             </Button>
         ),
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }: any) => {
-            // console.log({ row: row.getValue('options') });
             return (
                 <>
-                    <DialogTitle variant="h4" textAlign="center"> Add Question</DialogTitle>
+                    {errorMessage && <ErrorMessage message={errorMessage} />}
+
+                    <DialogTitle variant="h5"> Add Question</DialogTitle>
                     <DialogContent
                         sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
                     >
@@ -311,15 +327,17 @@ const Question = () => {
             )
         },
         renderEditRowDialogContent: ({ internalEditComponents, row, table }) => {
-
             return (
                 <>
-                    <DialogTitle variant="h4" textAlign="center"> Edit Question</DialogTitle>
+                    {errorMessage && <ErrorMessage message={errorMessage} />}
+
+                    <DialogTitle variant="h5"> Edit Question</DialogTitle>
                     <DialogContent
                         sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
                     >
                         {internalEditComponents}
                     </DialogContent>
+
                     <DialogActions>
                         <MRT_EditActionButtons variant="text" table={table} row={row} />
                     </DialogActions>

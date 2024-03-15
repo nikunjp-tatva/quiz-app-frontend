@@ -3,18 +3,17 @@ import {
     MaterialReactTable,
     useMaterialReactTable,
     type MRT_ColumnDef,
-    type MRT_ColumnFiltersState,
-    type MRT_PaginationState,
-    type MRT_SortingState,
     MRT_EditActionButtons,
 } from 'material-react-table';
 import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import { useNavigate } from "react-router-dom";
 
-import InfoTextIcon from '../../common/InfoTextIcon';
 import { validateTechnology } from './technologyValidation';
+import { addTechnology, getTechnologies, updateTechnologyById } from '../../services/technology.service';
+import ErrorMessage from '../../common/ErrorMessage';
 
 export type TechnologyType = {
     id: string;
@@ -25,59 +24,15 @@ export type TechnologyType = {
     cutOff: number;
 };
 
-type TechnologyApiResponse = {
-    data: Array<TechnologyType>;
-    meta: {
-        totalRowCount: number;
-    };
-};
-
-const iniData: TechnologyType[] = [
-    {
-        id: '1',
-        name: "React JS",
-        description: 'React JS exam',
-        noOfQuestion: 10,
-        duration: 20,
-        cutOff: 6,
-    },
-    {
-        id: '2',
-        name: "Node JS",
-        description: 'Node JS exam',
-        noOfQuestion: 20,
-        duration: 30,
-        cutOff: 14,
-    },
-    {
-        id: '3',
-        name: "NestJS",
-        description: 'NestJS exam',
-        noOfQuestion: 30,
-        duration: 30,
-        cutOff: 20,
-    },
-];
-
 const Technology = () => {
+    const history = useNavigate();
 
     //data and fetching state
-    const [data, setData] = useState<TechnologyType[]>(iniData);
+    const [data, setData] = useState<TechnologyType[]>([]);
     const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isRefetching, setIsRefetching] = useState(false);
-    const [rowCount, setRowCount] = useState(0);
-
-    //table state
-    const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
-        [],
-    );
-    const [globalFilter, setGlobalFilter] = useState('');
-    const [sorting, setSorting] = useState<MRT_SortingState>([]);
-    const [pagination, setPagination] = useState<MRT_PaginationState>({
-        pageIndex: 0,
-        pageSize: 10,
-    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -87,27 +42,18 @@ const Technology = () => {
                 setIsRefetching(true);
             }
 
-            const url = new URL(
-                '/api/data',
-                'http://localhost:3000',
-            );
-            url.searchParams.set(
-                'start',
-                `${pagination.pageIndex * pagination.pageSize}`,
-            );
-            url.searchParams.set('size', `${pagination.pageSize}`);
-            url.searchParams.set('filters', JSON.stringify(columnFilters ?? []));
-            url.searchParams.set('globalFilter', globalFilter ?? '');
-            url.searchParams.set('sorting', JSON.stringify(sorting ?? []));
-
             try {
-                const response = await fetch(url.href);
-                const json = (await response.json()) as TechnologyApiResponse;
-                setData(json.data);
-                setRowCount(json.meta.totalRowCount);
-            } catch (error) {
-                setIsError(true);
+                const response = await getTechnologies();
+                setData(response?.data?.results);
+            } catch (error: any) {
+                if (error?.response?.status === 401) {
+                    history('/auth/login');
+                }
+                if (error?.response?.status === 403) {
+                    history('/auth/login');
+                }
                 setIsLoading(false);
+                setIsError(true);
                 console.error(error);
                 return;
             }
@@ -115,15 +61,9 @@ const Technology = () => {
             setIsLoading(false);
             setIsRefetching(false);
         };
-        // fetchData();
+        fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        columnFilters, //re-fetch when column filters change
-        globalFilter, //re-fetch when global filter changes
-        pagination.pageIndex, //re-fetch when page index changes
-        pagination.pageSize, //re-fetch when page size changes
-        sorting, //re-fetch when sorting changes
-    ]);
+    }, []);
 
 
     const [validationErrors, setValidationErrors] = useState<
@@ -142,7 +82,7 @@ const Technology = () => {
             },
             {
                 accessorKey: 'name',
-                header: 'Name',
+                header: 'Technology Name',
                 size: 150,
                 enableHiding: false,
                 muiEditTextFieldProps: {
@@ -155,12 +95,16 @@ const Technology = () => {
                             ...validationErrors,
                             name: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
             {
                 accessorKey: 'description',
                 header: 'Description',
                 size: 150,
+                muiEditTextFieldProps: {
+                    onChange: () => setErrorMessage(""),
+                },
             },
             {
                 accessorKey: 'noOfQuestion',
@@ -176,11 +120,12 @@ const Technology = () => {
                             ...validationErrors,
                             noOfQuestion: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
             {
                 accessorKey: 'duration',
-                header: 'Duration (In Min) ',
+                header: 'Duration (In Min.) ',
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -192,11 +137,12 @@ const Technology = () => {
                             ...validationErrors,
                             duration: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
             {
                 accessorKey: 'cutOff',
-                header: (<InfoTextIcon headerName="Cut off (Numbers only)" titleText="The value should be less than the total question." />),
+                header: 'Cut-Off Marks (Numbers only)',
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -208,6 +154,7 @@ const Technology = () => {
                             ...validationErrors,
                             cutOff: undefined,
                         }),
+                    onChange: () => setErrorMessage(""),
                 },
             },
         ],
@@ -221,9 +168,18 @@ const Technology = () => {
         editDisplayMode: 'modal',
         createDisplayMode: 'modal',
         positionActionsColumn: 'last',
+        enableDensityToggle: false,
+        enableFullScreenToggle: false,
+        enableColumnFilterModes: false,
+        enableColumnFilters: false,
 
-        onEditingRowCancel: () => setValidationErrors({}),
-        onEditingRowSave: ({ table, values }) => {
+        enableColumnActions: false,
+        // enablePagination: false,
+        // enableSorting: false,
+        muiTableBodyRowProps: { hover: false },
+
+        onEditingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onEditingRowSave: async ({ table, values }) => {
             const newValidationErrors = validateTechnology(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
                 setValidationErrors(newValidationErrors);
@@ -232,10 +188,34 @@ const Technology = () => {
 
             setValidationErrors({});
 
-            table.setEditingRow(null); //exit editing mode
+            const updateTechnologyDetails = async () => {
+                setErrorMessage('');
+                try {
+                    await updateTechnologyById(values.id, values);
+                    setData(prev => prev.map((item) => {
+                        if (item.id === values.id) {
+                            return values;
+                        }
+                        return item;
+                    }))
+                    table.setEditingRow(null); //exit editing mode
+                } catch (error: any) {
+                    if (error?.response?.status === 401) {
+                        history('/auth/login');
+                    }
+                    if (error?.response?.status === 403) {
+                        history('/auth/login');
+                    }
+                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    console.error(error);
+                    return;
+                }
+                setErrorMessage('');
+            };
+            await updateTechnologyDetails();
         },
-        onCreatingRowCancel: () => setValidationErrors({}),
-        onCreatingRowSave: ({ table, values }) => {
+        onCreatingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onCreatingRowSave: async ({ table, values }) => {
 
             const newValidationErrors = validateTechnology(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
@@ -244,35 +224,41 @@ const Technology = () => {
             }
             setValidationErrors({});
 
-            setData([...data, values]);
+            const addTechnologyDetails = async () => {
+                setErrorMessage('');
+                try {
+                    const addedData = await addTechnology(values);
+                    setData([...data, addedData.data]);
 
-            table.setCreatingRow(null); //exit creating mode
-
+                    table.setCreatingRow(null); //exit creating mode
+                } catch (error: any) {
+                    if (error?.response?.status === 401) {
+                        history('/auth/login');
+                    }
+                    if (error?.response?.status === 403) {
+                        history('/auth/login');
+                    }
+                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    console.error(error);
+                    return;
+                }
+                setErrorMessage('');
+            };
+            await addTechnologyDetails();
         },
 
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },
-        // manualFiltering: true,
-        // manualPagination: true,
-        // manualSorting: true,
+
         muiToolbarAlertBannerProps: isError
             ? {
                 color: 'error',
                 children: 'Error loading data',
             }
             : undefined,
-        // onColumnFiltersChange: setColumnFilters,
-        onGlobalFilterChange: setGlobalFilter,
-        onPaginationChange: setPagination,
-        onSortingChange: setSorting,
-        rowCount,
         state: {
-            columnFilters,
-            globalFilter,
             isLoading,
-            pagination,
             showAlertBanner: isError,
             showProgressBars: isRefetching,
-            sorting,
         },
         renderTopToolbarCustomActions: ({ table }) => (
             <Button
@@ -286,7 +272,9 @@ const Technology = () => {
         ),
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
             <>
-                <DialogTitle variant="h4" textAlign="center"> Add Technology</DialogTitle>
+                {errorMessage && <ErrorMessage message={errorMessage} />}
+
+                <DialogTitle variant="h5"> Add Technology</DialogTitle>
                 <DialogContent
                     sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
                 >
@@ -297,6 +285,24 @@ const Technology = () => {
                 </DialogActions>
             </>
         ),
+        renderEditRowDialogContent: ({ internalEditComponents, row, table }) => {
+            return (
+                <>
+                    {errorMessage && <ErrorMessage message={errorMessage} />}
+
+                    <DialogTitle variant="h5"> Edit Technology</DialogTitle>
+                    <DialogContent
+                        sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                    >
+                        {internalEditComponents}
+                    </DialogContent>
+
+                    <DialogActions>
+                        <MRT_EditActionButtons variant="text" table={table} row={row} />
+                    </DialogActions>
+                </>
+            );
+        },
     });
 
     return <MaterialReactTable table={table} />;

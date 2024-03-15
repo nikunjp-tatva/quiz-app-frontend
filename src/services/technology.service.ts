@@ -29,7 +29,11 @@ export function updateTechnologyById(technologyId: string, data: any) {
   return axios.patch(
     API_URL + technologyId,
     {
-      ...data,
+      name: data.name,
+      description: data.description || undefined,
+      noOfQuestion: data.noOfQuestion,
+      duration: data.duration,
+      cutOff: data.cutOff,
     },
     { headers: authHeader() }
   );
