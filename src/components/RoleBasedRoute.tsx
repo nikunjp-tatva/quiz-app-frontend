@@ -7,7 +7,11 @@ interface RoleBasedRouteProps extends React.PropsWithChildren<{ roles: string[];
 }
 
 export function RoleBasedRoute({ roles, element }: Readonly<RoleBasedRouteProps>) {
-    const userRole = getUser().role;
+    const userRole = getUser()?.role;
+
+    if (!userRole) {
+        return <Navigate to="/auth/login" />;
+    }
     if (userRole && roles.includes(userRole)) {
         return element;
     }
