@@ -8,7 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Header from '../header/Header';
 import SidebarItems from './SidebarItems';
 
-const drawerWidth = 240;
+const drawerWidth = 205;
 
 export default function Sidebar({ children }: any) {
 
@@ -32,7 +32,7 @@ export default function Sidebar({ children }: any) {
                 <Toolbar />
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
-                        <SidebarItems/>
+                        <SidebarItems />
                     </List>
                 </Box>
             </Drawer>
