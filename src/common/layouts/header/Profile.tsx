@@ -8,7 +8,8 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ListItemText from "@mui/material/ListItemText";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
-import { removeUserSession } from "../../../services/auth.service";
+import { getUser, removeUserSession } from "../../../services/auth.service";
+import Avatar from "@mui/material/Avatar";
 
 const Profile = () => {
     const history = useNavigate();
@@ -28,6 +29,8 @@ const Profile = () => {
         history('/auth/login');
     }
 
+    const userName = getUser()?.name;
+
     return (<div>
         <IconButton
             size="large"
@@ -37,7 +40,12 @@ const Profile = () => {
             onClick={handleMenu}
             color="inherit"
         >
-            <AccountCircle />
+            {userName ? (<Avatar
+                sx={{ bgcolor: '#1976d2' }}
+                alt={userName}
+            >
+                {userName.charAt(0).toUpperCase()}
+            </Avatar>) : (<AccountCircle />)}
         </IconButton>
         <Menu
             id="menu-appbar"
