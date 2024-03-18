@@ -42,3 +42,7 @@ export function updateTechnologyById(technologyId: string, data: any) {
 export function getTechnologiesList() {
   return axios.get(API_URL + 'list');
 }
+
+export function getUserTechnologies() {
+  return axios.get(API_URL + 'accessed', { headers: authHeader() });
+}
