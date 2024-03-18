@@ -200,7 +200,7 @@ const Question = () => {
         enableDensityToggle: false,
         enableFullScreenToggle: false,
         enableColumnFilters: false,
-
+        enableRowNumbers: true,
         enableColumnActions: false,
         // enablePagination: false,
         // enableSorting: false,

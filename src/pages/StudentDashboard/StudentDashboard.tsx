@@ -101,7 +101,7 @@ const StudentDashboard = () => {
         enableFullScreenToggle: false,
         enableColumnFilterModes: false,
         enableColumnFilters: false,
-
+        enableRowNumbers: true,
         enableColumnActions: false,
         // enablePagination: false,
         // enableSorting: false,

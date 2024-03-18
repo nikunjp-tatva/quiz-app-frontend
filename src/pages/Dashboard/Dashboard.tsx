@@ -110,12 +110,12 @@ const Dashboard = () => {
         enableFullScreenToggle: false,
         enableColumnFilterModes: false,
         enableColumnFilters: false,
-
+        enableRowNumbers: true,
         enableColumnActions: false,
         // enablePagination: false,
         // enableSorting: false,
         muiTableBodyRowProps: { hover: false },
-        
+
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },
 
         muiToolbarAlertBannerProps: isError
@@ -124,9 +124,9 @@ const Dashboard = () => {
                 children: 'Error loading data',
             }
             : undefined,
-            renderTopToolbarCustomActions: ({ table }) => (
-                <Typography variant='h4' fontWeight={500}>Exam Summary</Typography>
-            ),
+        renderTopToolbarCustomActions: ({ table }) => (
+            <Typography variant='h4' fontWeight={500}>Exam Summary</Typography>
+        ),
         state: {
             isLoading,
             showAlertBanner: isError,
