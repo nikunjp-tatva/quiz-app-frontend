@@ -47,8 +47,11 @@ const Dashboard = () => {
 
                 setData(resultData);
             } catch (error: any) {
-                if (error?.response?.status === 401 || error?.response?.status === 403) {
-                    history(PATH.LOGIN);
+                if (error?.response?.status === 401) {
+                    history(PATH.UNAUTHORIZED);
+                }
+                if (error?.response?.status === 403) {
+                    history(PATH.FORBIDDEN);
                 }
                 setIsLoading(false);
                 setIsError(true);

@@ -15,8 +15,12 @@ const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
 const StudentDashboard = lazy(() => import("../pages/StudentDashboard/StudentDashboard"));
 const ExamList = lazy(() => import("../pages/Exam/ExamList"));
 const ExamResult = lazy(() => import("../pages/ExamResult/ExamResult"));
+const UnAuthorized = lazy(() => import("../pages/Error/UnAuthorized"));
+const Forbidden = lazy(() => import("../pages/Error/Forbidden"));
+const NotFound = lazy(() => import("../pages/Error/NotFound"));
 
 const Router = [
+    // auth routes
     {
         path: "/auth",
         children: [
@@ -24,6 +28,7 @@ const Router = [
             { path: PATH.LOGIN, element: <Login /> },
         ],
     },
+    // admin routes
     {
         path: "/",
         children: [
@@ -32,6 +37,7 @@ const Router = [
             { path: PATH.DASHBOARD, element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Dashboard /></Sidebar>)} /> },
         ],
     },
+    // student routes
     {
         path: "/",
         children: [
@@ -39,6 +45,15 @@ const Router = [
             { path: PATH.EXAMS, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamList /></Sidebar>)} /> },
             { path: PATH.EXAMS_TECHNOLOGY, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
             { path: PATH.EXAM_RESULT, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamResult /></Sidebar>)} /> },
+        ],
+    },
+    // error routes
+    {
+        path: "/",
+        children: [
+            { path: PATH.UNAUTHORIZED, element: <UnAuthorized /> },
+            { path: PATH.FORBIDDEN, element: <Forbidden /> },
+            { path: "*", element: <NotFound /> },
         ],
     },
 ];

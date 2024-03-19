@@ -48,6 +48,7 @@ export const PATH = {
   EXAMS_TECHNOLOGY: '/exams/:technologyId',
   EXAM_RESULT: '/exam-result',
   UNAUTHORIZED: '/unauthorized',
+  FORBIDDEN: '/forbidden',
 };
 
 export const COLOR = {
