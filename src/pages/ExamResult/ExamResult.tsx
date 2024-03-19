@@ -61,7 +61,7 @@ export default function ExamResult() {
                                     {` Spent Time: `}
                                     <Typography variant='body1' fontWeight={600} display='inline-block'>
                                         {`${Math.floor(result?.spentTime / 60)} Hours ${Math.floor(
-                                            (result?.spentTime))} Minutes ${Math.floor((result?.spentTime % 1) * 60)} Seconds`}
+                                            (result?.spentTime % 60))} Minutes ${Math.floor((result?.spentTime % 1) * 60)} Seconds`}
                                     </Typography>
                                 </Typography>
                             )}
