@@ -1,5 +1,7 @@
 import * as Yup from 'yup';
 
+import roles from '../../../config/Roles';
+
 export const registerValidationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -10,11 +12,11 @@ export const registerValidationSchema = Yup.object().shape({
       'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
     ),
   role: Yup.string()
-    .oneOf(['user', 'admin'], 'You must select a role')
+    .oneOf(Object.values(roles), 'You must select a role')
     .required('Role is required'),
 
   technologies: Yup.array().when('role', ([role], schema) => {
-    if (role === 'user') {
+    if (role === roles.STUDENT) {
       return schema.of(Yup.string()).min(1, 'One technology is required');
     }
     return schema.notRequired();

@@ -4,6 +4,10 @@ export interface FormInputProps {
   label?: string;
   setValue?: any;
   type?: string;
-  clearError?: Function;
+  clearError?: () => void;
   values?: object[];
+  options?: {
+    label: string;
+    value: string;
+  }[];
 }

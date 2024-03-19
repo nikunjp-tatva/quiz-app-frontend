@@ -8,6 +8,7 @@ import {
 import "react-circular-progressbar/dist/styles.css";
 
 import SkippedQuestions from './SkippedQuestions';
+import { COLOR } from '../../config/config';
 
 export default function ExamResult() {
     const location = useLocation();
@@ -107,7 +108,7 @@ export default function ExamResult() {
                             <Typography variant='h5' textAlign='center' pb={3}>
                                 Score
                             </Typography>
-                            <CircularProgressbar value={result?.percentage} text={`${result?.noOfCorrectQuestions}/${result?.technology?.noOfQuestion}`} styles={buildStyles({ pathColor: "#1976d2" })} />
+                            <CircularProgressbar value={result?.percentage} text={`${result?.noOfCorrectQuestions}/${result?.technology?.noOfQuestion}`} styles={buildStyles({ pathColor: COLOR.BLUE })} />
                         </Box>
                     </Box>
 

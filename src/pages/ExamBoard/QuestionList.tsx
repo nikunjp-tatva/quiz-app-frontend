@@ -2,6 +2,8 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
+import { COLOR } from '../../config/config';
+
 type questionType = {
     id: string | null | number;
     bgColor?: string | null;
@@ -19,16 +21,16 @@ export default function QuestionList({ questions, handleQuestionListClick, curre
     return (
         <Grid container spacing={2} p={2}>
             {questions.map((question: questionType) => {
-                let backColor = '#E7E7E7';
+                let backColor = COLOR.EXAM_BACKGROUND;
                 let fontColor = '#000';
 
-                if (question?.bgColor && question?.bgColor !== '#E7E7E7') {
+                if (question?.bgColor && question?.bgColor !== COLOR.EXAM_BACKGROUND) {
                     backColor = question.bgColor;
                     fontColor = '#fff';
                 }
 
                 if (currentPage === question.serialNo) {
-                    backColor = '#0468BF';
+                    backColor = COLOR.CURRENT;
                     fontColor = '#fff';
                 }
 

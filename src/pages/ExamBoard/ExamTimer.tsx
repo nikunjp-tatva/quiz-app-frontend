@@ -30,18 +30,27 @@ export default function ExamTimer({ examTime = 30, onTimerEnds }: Readonly<{ exa
     const formatTime = (time: number) => time.toString().padStart(2, '0');
 
     return (
-        <Box pt={2} pb={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: "center" }}>
+        <Box pt={2} pb={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: "center" }}
+        >
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} mr={2}>
+
                 <Typography variant="h4">{formatTime(hours)}</Typography>
                 <Typography variant="subtitle1">Hours</Typography>
+
             </Box>
+
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} mr={2}>
+
                 <Typography variant="h4">{formatTime(minutes)}</Typography>
                 <Typography variant="subtitle1">Minutes</Typography>
+
             </Box>
+
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
                 <Typography variant="h4">{formatTime(seconds)}</Typography>
                 <Typography variant="subtitle1">Seconds</Typography>
+                
             </Box>
         </Box>
     )

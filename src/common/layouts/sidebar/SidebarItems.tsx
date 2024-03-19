@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Home, QuestionAnswer, Quiz, RateReview } from '@mui/icons-material';
 import ListItem from '@mui/material/ListItem';
 import { NavLink, useLocation } from 'react-router-dom';
-
-import roles from '../../../config/Roles';
-import { getUser } from '../../../services/auth.service';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+
+import roles from '../../../config/Roles';
+import { getUser } from '../../../services/auth.service';
 
 export default function SidebarItems() {
 

@@ -5,9 +5,10 @@ import {
     type MRT_ColumnDef,
 } from 'material-react-table';
 import { useNavigate } from "react-router-dom";
+import { Typography } from '@mui/material';
 
 import { getSubmittedExamsOfUser } from '../../services/exam.service';
-import { Typography } from '@mui/material';
+import { PATH } from '../../config/config';
 
 export type ExamResultType = {
     technology: string;
@@ -44,11 +45,8 @@ const StudentDashboard = () => {
 
                 setData(resultData);
             } catch (error: any) {
-                if (error?.response?.status === 401) {
-                    history('/auth/login');
-                }
-                if (error?.response?.status === 403) {
-                    history('/auth/login');
+                if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    history(PATH.LOGIN);
                 }
                 setIsLoading(false);
                 setIsError(true);
@@ -103,8 +101,6 @@ const StudentDashboard = () => {
         enableColumnFilters: false,
         enableRowNumbers: true,
         enableColumnActions: false,
-        // enablePagination: false,
-        // enableSorting: false,
         muiTableBodyRowProps: { hover: false },
 
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },

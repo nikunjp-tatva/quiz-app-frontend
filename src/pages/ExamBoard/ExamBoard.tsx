@@ -11,8 +11,9 @@ import QuestionList from './QuestionList';
 import BoxHeader from './BoxHeader';
 import ExamTimer from './ExamTimer';
 import QuestionData from './QuestionData';
-import { getExamResultDetails, saveExamResult } from '../../services/exam.service';
+import { getExamDetails, saveExamResult } from '../../services/exam.service';
 import ExamStartDialog from './ExamStartDialog';
+import { COLOR, PATH } from '../../config/config';
 
 type TechnologyType = {
     cutOff?: number;
@@ -70,7 +71,7 @@ export default function ExamBoard() {
     useEffect(() => {
         setIsLoading(true);
         setError('');
-        technologyId && getExamResultDetails(technologyId).then(({ data }) => {
+        technologyId && getExamDetails(technologyId).then(({ data }) => {
             setQuestionsData(addRequiredFieldsInQuestions(data?.questions));
             setTechnologyDetails(data?.technology);
         }).catch((error) => { setIsLoading(true); setError(error?.response?.data?.message || error.message) });
@@ -80,28 +81,32 @@ export default function ExamBoard() {
 
     }, [technologyId]);
 
-
-    const handleQuestionChange = ({ target }: any) => setCurrentPageNo(prevPageNo => {
-        const newQuestionPage = target.innerText;
-        if (prevPageNo === newQuestionPage) {
-            return newQuestionPage;
-        }
+    const updateQuestionColor = (prevPageNo: string) => {
 
         setQuestionsData((prevQuestionData: { [x: string]: any; }) => {
             const questionData = prevQuestionData[prevPageNo];
 
             if (questionData?.status !== 'MarkForReview') {
                 if (questionData?.selectedOption && questionData?.selectedOption !== '') {
-                    questionData.bgColor = '#398B39';
+                    questionData.bgColor = COLOR.ANSWERED;
                     questionData.status = 'Answered';
                 }
                 if (!questionData?.selectedOption || questionData.selectedOption === '') {
-                    questionData.bgColor = '#DA7B03';
+                    questionData.bgColor = COLOR.NOT_ANSWERED;
                     questionData.status = 'Not Answered';
                 }
             }
             return { ...prevQuestionData, [prevPageNo]: questionData };
         });
+    }
+
+    const handleQuestionChange = ({ target }: any) => setCurrentPageNo(prevPageNo => {
+        const newQuestionPage = target.innerText;
+        if (prevPageNo === newQuestionPage) {
+            return prevPageNo;
+        }
+
+        updateQuestionColor(prevPageNo);
 
         return newQuestionPage;
     });
@@ -111,22 +116,7 @@ export default function ExamBoard() {
         if (parsedPage === 1) {
             return prevQuestion;
         }
-
-        setQuestionsData((prevQuestionData: { [x: string]: any; }) => {
-            const questionData = prevQuestionData[prevQuestion];
-
-            if (questionData?.status !== 'MarkForReview') {
-                if (questionData?.selectedOption && questionData?.selectedOption !== '') {
-                    questionData.bgColor = '#398B39';
-                    questionData.status = 'Answered';
-                }
-                if (!questionData?.selectedOption || questionData.selectedOption === '') {
-                    questionData.bgColor = '#DA7B03';
-                    questionData.status = 'Not Answered';
-                }
-            }
-            return { ...prevQuestionData, [prevQuestion]: questionData };
-        });
+        updateQuestionColor(prevQuestion);
 
         return (parsedPage - 1).toString()
     });
@@ -137,28 +127,14 @@ export default function ExamBoard() {
             return prevQuestion;
         }
 
-        setQuestionsData((prevQuestionData: { [x: string]: any; }) => {
-            const questionData = prevQuestionData[prevQuestion];
-
-            if (questionData?.status !== 'MarkForReview') {
-                if (questionData?.selectedOption && questionData?.selectedOption !== '') {
-                    questionData.bgColor = '#398B39';
-                    questionData.status = 'Answered';
-                }
-                if (!questionData?.selectedOption || questionData.selectedOption === '') {
-                    questionData.bgColor = '#DA7B03';
-                    questionData.status = 'Not Answered';
-                }
-            }
-            return { ...prevQuestionData, [prevQuestion]: questionData };
-        });
+        updateQuestionColor(prevQuestion);
 
         return (parsedPage + 1).toString()
     });
 
     const handleMarkReviewButtonClick = () => setQuestionsData((prev: any) => {
         const questionData = prev[currentPageNo];
-        questionData.bgColor = '#A40503';
+        questionData.bgColor = COLOR.MARK_FOR_REVIEW;
         questionData.status = 'MarkForReview';
         return { ...prev, [currentPageNo]: questionData };
     });
@@ -178,14 +154,13 @@ export default function ExamBoard() {
     const navigate = useNavigate();
 
     const handleSubmitButtonClickEvent = async () => {
-        // const { technologyId, submittedQuestions, completeTime }
 
         const response = await saveExamResult({
             technologyId: technologyDetails.id,
             submittedQuestions: Object.values(questionsData),
             completeTime: ((Date.now() - userSpentTime) / 60000),
         });
-        navigate('/exam-result', { state: { result: response.data } });
+        navigate(PATH.EXAM_RESULT, { state: { result: response.data } });
         setUserSpentTime(0);
     }
 
@@ -195,7 +170,7 @@ export default function ExamBoard() {
     }
 
     const examClose = () => {
-        navigate('/exams');
+        navigate(PATH.EXAMS);
     }
 
     return (
@@ -207,7 +182,7 @@ export default function ExamBoard() {
                     <Grid item md={8} lg={8.7} xl={9} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                         <Box
                             height={40}
-                            sx={{ backgroundColor: "#E7E7E7", display: "flex" }}
+                            sx={{ backgroundColor: COLOR.EXAM_BACKGROUND, display: "flex" }}
                             justifyContent="center"
                             alignItems="center"
                         >
@@ -222,10 +197,10 @@ export default function ExamBoard() {
 
                         <QuestionData questionDetails={questionsData[currentPageNo]} onOptionSelect={handleQuestionOptionChange} />
 
-                        <Box mt="auto" pl={4} pt={1} pb={1} sx={{ borderTopWidth: 1, backgroundColor: "#F0F0F0" }}>
+                        <Box mt="auto" pl={4} pt={1} pb={1} sx={{ borderTopWidth: 1, backgroundColor: COLOR.NOT_ATTEMPTED }}>
                             <Box pt={1} pb={1} pr={1} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Button variant="contained" sx={{
-                                    borderRadius: 29, textTransform: 'none', backgroundColor: "#A40503", '&:hover': {
+                                    borderRadius: 29, textTransform: 'none', backgroundColor: COLOR.MARK_FOR_REVIEW, '&:hover': {
                                         backgroundColor: "#8a0402",
                                     },
                                 }}
@@ -267,7 +242,7 @@ export default function ExamBoard() {
                                     <Badge variant="dot" sx={{
                                         marginRight: 2,
                                         '& .MuiBadge-badge': {
-                                            backgroundColor: "#0468BF",
+                                            backgroundColor: COLOR.CURRENT,
                                             height: 13,
                                             width: 13,
                                             borderRadius: 4
@@ -279,7 +254,7 @@ export default function ExamBoard() {
                                 <Box>
                                     <Badge variant="dot" sx={{
                                         marginRight: 2, marginLeft: 4, '& .MuiBadge-badge': {
-                                            backgroundColor: "#F0F0F0",
+                                            backgroundColor: COLOR.NOT_ATTEMPTED,
                                             height: 13,
                                             width: 13,
                                             borderRadius: 4,
@@ -293,7 +268,7 @@ export default function ExamBoard() {
                                 <Box>
                                     <Badge variant="dot" sx={{
                                         marginRight: 2, marginLeft: 4, '& .MuiBadge-badge': {
-                                            backgroundColor: "#398B39",
+                                            backgroundColor: COLOR.ANSWERED,
                                             height: 13,
                                             width: 13,
                                             borderRadius: 4
@@ -305,7 +280,7 @@ export default function ExamBoard() {
                                 <Box>
                                     <Badge variant="dot" sx={{
                                         marginRight: 2, marginLeft: 4, '& .MuiBadge-badge': {
-                                            backgroundColor: "#DA7B03",
+                                            backgroundColor: COLOR.NOT_ANSWERED,
                                             height: 13,
                                             width: 13,
                                             borderRadius: 4
@@ -317,7 +292,7 @@ export default function ExamBoard() {
                                 <Box>
                                     <Badge variant="dot" sx={{
                                         marginRight: 2, marginLeft: 4, '& .MuiBadge-badge': {
-                                            backgroundColor: "#A40503",
+                                            backgroundColor: COLOR.MARK_FOR_REVIEW,
                                             height: 13,
                                             width: 13,
                                             borderRadius: 4

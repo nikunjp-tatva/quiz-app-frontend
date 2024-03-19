@@ -8,6 +8,8 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import { styled } from '@mui/material/styles';
 
+import { COLOR } from '../../config/config';
+
 type SkippedQuestionType = {
     questionText: string;
     options: string[];
@@ -17,7 +19,7 @@ type SkippedQuestionType = {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: '#1976d2',
+        backgroundColor: COLOR.BLUE,
         color: theme.palette.common.white,
         fontSize: 20,
     },

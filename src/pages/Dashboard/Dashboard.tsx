@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-    MRT_Table,
     MaterialReactTable,
     useMaterialReactTable,
     type MRT_ColumnDef,
 } from 'material-react-table';
 import { useNavigate } from "react-router-dom";
+import { Typography } from '@mui/material';
 
 import { getAllExamSummary } from '../../services/exam.service';
-import { Typography } from '@mui/material';
+import { PATH } from '../../config/config';
 
 export type ExamResultType = {
     user: string;
@@ -22,7 +22,6 @@ export type ExamResultType = {
 const Dashboard = () => {
     const history = useNavigate();
 
-    //data and fetching state
     const [data, setData] = useState<ExamResultType[]>([]);
     const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -48,11 +47,8 @@ const Dashboard = () => {
 
                 setData(resultData);
             } catch (error: any) {
-                if (error?.response?.status === 401) {
-                    history('/auth/login');
-                }
-                if (error?.response?.status === 403) {
-                    history('/auth/login');
+                if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    history(PATH.LOGIN);
                 }
                 setIsLoading(false);
                 setIsError(true);
@@ -112,8 +108,6 @@ const Dashboard = () => {
         enableColumnFilters: false,
         enableRowNumbers: true,
         enableColumnActions: false,
-        // enablePagination: false,
-        // enableSorting: false,
         muiTableBodyRowProps: { hover: false },
 
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },
@@ -124,7 +118,7 @@ const Dashboard = () => {
                 children: 'Error loading data',
             }
             : undefined,
-        renderTopToolbarCustomActions: ({ table }) => (
+        renderTopToolbarCustomActions: () => (
             <Typography variant='h4' fontWeight={500}>Exam Summary</Typography>
         ),
         state: {

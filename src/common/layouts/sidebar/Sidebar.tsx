@@ -7,6 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 
 import Header from '../header/Header';
 import SidebarItems from './SidebarItems';
+import { COLOR } from '../../../config/config';
 
 const drawerWidth = 205;
 
@@ -24,7 +25,7 @@ export default function Sidebar({ children }: any) {
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
                         boxSizing: 'border-box',
-                        backgroundColor: "#1976d2",
+                        backgroundColor: COLOR.BLUE,
                         color: "#fff"
                     },
                 }}

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { validateTechnology } from './technologyValidation';
 import { addTechnology, getTechnologies, updateTechnologyById } from '../../services/technology.service';
 import ErrorMessage from '../../common/ErrorMessage';
+import { PATH } from '../../config/config';
 
 export type TechnologyType = {
     id: string;
@@ -27,7 +28,6 @@ export type TechnologyType = {
 const Technology = () => {
     const history = useNavigate();
 
-    //data and fetching state
     const [data, setData] = useState<TechnologyType[]>([]);
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -36,9 +36,7 @@ const Technology = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!data.length) {
-                setIsLoading(true);
-            } else {
+            if (data.length) {
                 setIsRefetching(true);
             }
 
@@ -46,11 +44,8 @@ const Technology = () => {
                 const response = await getTechnologies();
                 setData(response?.data?.results);
             } catch (error: any) {
-                if (error?.response?.status === 401) {
-                    history('/auth/login');
-                }
-                if (error?.response?.status === 403) {
-                    history('/auth/login');
+                if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    history(PATH.LOGIN);
                 }
                 setIsLoading(false);
                 setIsError(true);
@@ -174,8 +169,6 @@ const Technology = () => {
         enableColumnFilters: false,
         enableRowNumbers: true,
         enableColumnActions: false,
-        // enablePagination: false,
-        // enableSorting: false,
         muiTableBodyRowProps: { hover: false },
 
         onEditingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
@@ -200,11 +193,8 @@ const Technology = () => {
                     }))
                     table.setEditingRow(null); //exit editing mode
                 } catch (error: any) {
-                    if (error?.response?.status === 401) {
-                        history('/auth/login');
-                    }
-                    if (error?.response?.status === 403) {
-                        history('/auth/login');
+                    if (error?.response?.status === 401 || error?.response?.status === 403) {
+                        history(PATH.LOGIN);
                     }
                     setErrorMessage(error?.response?.data?.message || 'Something went wrong');
                     console.error(error);
@@ -232,12 +222,9 @@ const Technology = () => {
 
                     table.setCreatingRow(null); //exit creating mode
                 } catch (error: any) {
-                    if (error?.response?.status === 401) {
-                        history('/auth/login');
-                    }
-                    if (error?.response?.status === 403) {
-                        history('/auth/login');
-                    }
+                    if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    history(PATH.LOGIN);
+                }
                     setErrorMessage(error?.response?.data?.message || 'Something went wrong');
                     console.error(error);
                     return;

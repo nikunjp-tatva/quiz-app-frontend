@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Typography } from '@mui/material';
 
 import { getUserTechnologies } from '../../services/technology.service';
+import { PATH } from '../../config/config';
 
 export type TechnologyType = {
     name: string;
@@ -36,11 +37,8 @@ export default function ExamList() {
                 const response = await getUserTechnologies();
                 setData(response?.data);
             } catch (error: any) {
-                if (error?.response?.status === 401) {
-                    history('/auth/login');
-                }
-                if (error?.response?.status === 403) {
-                    history('/auth/login');
+                if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    history(PATH.LOGIN);
                 }
                 setIsLoading(false);
                 setIsError(true);

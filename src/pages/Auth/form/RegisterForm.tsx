@@ -10,7 +10,8 @@ import { registerValidationSchema } from "../validationSchema/registerSchema";
 import { useYupValidationResolver } from "../../../helpers/yupValidation.helper";
 import { register, setUserSession } from "../../../services/auth.service";
 import TechnologyList from "../component/TechnologyList";
-import roles from "../../../config/Roles";
+import roles, { USER_ROLES } from "../../../config/Roles";
+import { PATH } from "../../../config/config";
 
 interface IRegisterFormInput {
     name: string;
@@ -24,7 +25,7 @@ const defaultValues = {
     name: "",
     email: "",
     password: "",
-    role: "user",
+    role: roles.STUDENT,
     technologies: [],
 };
 
@@ -56,7 +57,7 @@ const RegisterForm = () => {
 
             const userRole = userDetails?.user?.role;
 
-            history(userRole === roles.EXAMINER ? '/dashboard' : '/home');
+            history(userRole === roles.EXAMINER ? PATH.DASHBOARD : PATH.HOME);
         } catch (error: any) {
             setLoading(false);
             console.log({ error: error });
@@ -114,7 +115,7 @@ const RegisterForm = () => {
                 >
                     Role
                 </Typography>
-                <FormInputRadio name="role" control={control} />
+                <FormInputRadio name="role" control={control} options={USER_ROLES}/>
 
                 {role === "user" && <TechnologyList control={control} errors={errors} />}
             </Stack>

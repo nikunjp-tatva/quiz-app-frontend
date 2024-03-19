@@ -21,6 +21,7 @@ import {
 import { addQuestion, getQuestions, updateQuestionById } from '../../services/question.service';
 import { getTechnologiesList } from '../../services/technology.service';
 import ErrorMessage from '../../common/ErrorMessage';
+import { PATH } from '../../config/config';
 
 export type QuestionType = {
     id: string;
@@ -65,12 +66,10 @@ const Question = () => {
                 }));
                 setData(questionList);
             } catch (error: any) {
-                if (error?.response?.status === 401) {
-                    history('/auth/login');
+                if (error?.response?.status === 401 || error?.response?.status === 403) {
+                    history(PATH.LOGIN);
                 }
-                if (error?.response?.status === 403) {
-                    history('/auth/login');
-                }
+                
                 setIsLoading(false);
                 setIsError(true);
                 console.error(error);
@@ -202,8 +201,6 @@ const Question = () => {
         enableColumnFilters: false,
         enableRowNumbers: true,
         enableColumnActions: false,
-        // enablePagination: false,
-        // enableSorting: false,
         muiTableBodyRowProps: { hover: false },
 
         onEditingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
@@ -233,11 +230,8 @@ const Question = () => {
                     }));
                     table.setEditingRow(null); //exit editing mode
                 } catch (error: any) {
-                    if (error?.response?.status === 401) {
-                        history('/auth/login');
-                    }
-                    if (error?.response?.status === 403) {
-                        history('/auth/login');
+                    if (error?.response?.status === 401 || error?.response?.status === 403) {
+                        history(PATH.LOGIN);
                     }
                     setErrorMessage(error?.response?.data?.message || 'Something went wrong');
                     console.error(error);
@@ -268,11 +262,8 @@ const Question = () => {
                     setData([...data, addedData.data]);
                     table.setCreatingRow(null); //exit creating mode
                 } catch (error: any) {
-                    if (error?.response?.status === 401) {
-                        history('/auth/login');
-                    }
-                    if (error?.response?.status === 403) {
-                        history('/auth/login');
+                    if (error?.response?.status === 401 || error?.response?.status === 403) {
+                        history(PATH.LOGIN);
                     }
                     setErrorMessage(error?.response?.data?.message || 'Something went wrong');
                     console.error(error);

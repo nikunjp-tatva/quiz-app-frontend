@@ -7,14 +7,14 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 
+import { alphabetOption } from '../../config/config';
+
 type QuestionDetails = {
     options: string[];
     serialNo: string;
     questionText: string;
     selectedOption: string;
 };
-
-const alphabetOption = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
 export default function QuestionData({ questionDetails, onOptionSelect }: Readonly<{ questionDetails: QuestionDetails, onOptionSelect: any }>) {
     return (

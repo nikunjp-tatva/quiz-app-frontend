@@ -8,8 +8,10 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ListItemText from "@mui/material/ListItemText";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
-import { getUser, removeUserSession } from "../../../services/auth.service";
 import Avatar from "@mui/material/Avatar";
+
+import { getUser, removeUserSession } from "../../../services/auth.service";
+import { COLOR, PATH } from "../../../config/config";
 
 const Profile = () => {
     const history = useNavigate();
@@ -26,7 +28,7 @@ const Profile = () => {
 
     const handleLogout = () => {
         removeUserSession();
-        history('/auth/login');
+        history(PATH.LOGIN);
     }
 
     const userName = getUser()?.name;
@@ -41,7 +43,7 @@ const Profile = () => {
             color="inherit"
         >
             {userName ? (<Avatar
-                sx={{ bgcolor: '#1976d2' }}
+                sx={{ bgcolor: COLOR.BLUE }}
                 alt={userName}
             >
                 {userName.charAt(0).toUpperCase()}
@@ -62,12 +64,12 @@ const Profile = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
         >
-            <MenuItem onClick={handleClose}>
+            {/* <MenuItem onClick={handleClose}>
                 <ListItemIcon>
                     <ManageAccountsIcon width={20} />
                 </ListItemIcon>
                 <ListItemText>My Profile</ListItemText>
-            </MenuItem>
+            </MenuItem> */}
             <MenuItem onClick={handleLogout}>
                 <ListItemIcon>
                     <LogoutIcon width={20} />

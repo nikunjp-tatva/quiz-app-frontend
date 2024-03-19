@@ -1,7 +1,9 @@
 import React, { lazy } from "react";
+
 import { RoleBasedRoute } from "../components/RoleBasedRoute";
 import roles from '../config/Roles';
 import ExamBoard from "../pages/ExamBoard/ExamBoard";
+import { PATH } from "../config/config";
 
 /* ****Pages***** */
 const Register = lazy(() => import("../pages/Auth/Register"));
@@ -18,25 +20,25 @@ const Router = [
     {
         path: "/auth",
         children: [
-            { path: "/auth/register", element: <Register /> },
-            { path: "/auth/login", element: <Login /> },
+            { path: PATH.REGISTER, element: <Register /> },
+            { path: PATH.LOGIN, element: <Login /> },
         ],
     },
     {
         path: "/",
         children: [
-            { path: "/technologies", element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Technology /></Sidebar>)} /> },
-            { path: "/questions", element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Question /></Sidebar>)} /> },
-            { path: "/dashboard", element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Dashboard /></Sidebar>)} /> },
+            { path: PATH.TECHNOLOGIES, element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Technology /></Sidebar>)} /> },
+            { path: PATH.QUESTIONS, element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Question /></Sidebar>)} /> },
+            { path: PATH.DASHBOARD, element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Dashboard /></Sidebar>)} /> },
         ],
     },
     {
         path: "/",
         children: [
-            { path: "/home", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><StudentDashboard /></Sidebar>)} /> },
-            { path: "/exams", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamList /></Sidebar>)} /> },
-            { path: "/exams/:technologyId", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
-            { path: "/exam-result", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamResult /></Sidebar>)} /> },
+            { path: PATH.HOME, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><StudentDashboard /></Sidebar>)} /> },
+            { path: PATH.EXAMS, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamList /></Sidebar>)} /> },
+            { path: PATH.EXAMS_TECHNOLOGY, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
+            { path: PATH.EXAM_RESULT, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamResult /></Sidebar>)} /> },
         ],
     },
 ];

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001/v1/auth/';
+import { API_URL } from '../config/config';
 
 export async function login(email: string, password: string) {
-  const response = await axios.post(API_URL + 'login', {
+  const response = await axios.post(API_URL.AUTH.LOGIN, {
     email,
     password,
   });
@@ -17,7 +17,7 @@ export async function register(data: {
   role: string;
   technologies: string[];
 }) {
-  const response = await axios.post(API_URL + 'register', data);
+  const response = await axios.post(API_URL.AUTH.REGISTER, data);
   return response.data;
 }
 

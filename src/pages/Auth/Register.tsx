@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import PageContainer from "../../common/container/PageContainer";
 import RegisterForm from "./form/RegisterForm";
+import { COLOR, PATH } from "../../config/config";
 
 const Register = () => (
     <PageContainer title="Register" description="this is Register page">
@@ -12,7 +13,7 @@ const Register = () => (
                 position: "relative",
                 "&:before": {
                     content: '""',
-                    backgroundColor: "#465167",
+                    backgroundColor: COLOR.BLACK,
                     backgroundSize: "400% 400%",
                     animation: "gradient 15s ease infinite",
                     position: "absolute",
@@ -51,7 +52,7 @@ const Register = () => (
                             </Typography>
                             <Typography
                                 component={Link}
-                                to="/auth/login"
+                                to={PATH.LOGIN}
                                 fontWeight="500"
                                 sx={{
                                     textDecoration: "none",

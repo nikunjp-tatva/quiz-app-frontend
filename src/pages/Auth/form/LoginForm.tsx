@@ -9,6 +9,7 @@ import { loginValidationSchema } from "../validationSchema/loginSchema";
 import { login, setUserSession } from "../../../services/auth.service";
 import HelperText from "../../../common/HelperText";
 import roles from "../../../config/Roles";
+import { PATH } from "../../../config/config";
 
 interface ILoginFormInput {
     email: string;
@@ -46,7 +47,7 @@ const LoginForm = () => {
 
             const userRole = userDetails?.user?.role;
 
-            history(userRole === roles.EXAMINER ? '/dashboard' : '/home');
+            history(userRole === roles.EXAMINER ? PATH.DASHBOARD : PATH.HOME);
         } catch (error: any) {
             setLoading(false);
             console.log({ error: error });

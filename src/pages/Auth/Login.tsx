@@ -2,9 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Grid, Box, Card, Stack, Typography } from "@mui/material";
 
-// components
 import PageContainer from "../../common/container/PageContainer";
 import LoginForm from "./form/LoginForm";
+import { COLOR } from "../../config/config";
 
 const Login = () => {
   return (
@@ -14,7 +14,7 @@ const Login = () => {
           position: "relative",
           "&:before": {
             content: '""',
-            backgroundColor: "#465167",
+            backgroundColor: COLOR.BLACK,
             backgroundSize: "400% 400%",
             animation: "gradient 15s ease infinite",
             position: "absolute",

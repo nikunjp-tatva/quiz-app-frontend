@@ -6,22 +6,12 @@ import {
     RadioGroup,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
+
 import { FormInputProps } from "./FormInputProps";
 
-const options = [
-    {
-        label: "Student",
-        value: "user",
-    },
-    {
-        label: "Examiner",
-        value: "admin",
-    },
-];
-
-export const FormInputRadio: React.FC<FormInputProps> = ({ name, control }) => {
+export const FormInputRadio: React.FC<FormInputProps> = ({ name, control, options }) => {
     const generateRadioOptions = () => {
-        return options.map((singleOption) => (
+        return options?.map((singleOption) => (
             <FormControlLabel
                 key={singleOption.label}
                 value={singleOption.value}
@@ -38,8 +28,6 @@ export const FormInputRadio: React.FC<FormInputProps> = ({ name, control }) => {
                 control={control}
                 render={({
                     field: { onChange, value },
-                    fieldState: { error },
-                    formState,
                 }) => (
                     <RadioGroup
                         value={value}
