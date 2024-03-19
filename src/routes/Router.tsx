@@ -1,6 +1,7 @@
 import React, { lazy } from "react";
 import { RoleBasedRoute } from "../components/RoleBasedRoute";
 import roles from '../config/Roles';
+import ExamBoard from "../pages/ExamBoard/ExamBoard";
 
 /* ****Pages***** */
 const Register = lazy(() => import("../pages/Auth/Register"));
@@ -10,7 +11,8 @@ const Technology = lazy(() => import("../pages/Technology/Technology"));
 const Question = lazy(() => import("../pages/Question/Question"));
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
 const StudentDashboard = lazy(() => import("../pages/StudentDashboard/StudentDashboard"));
-const ExamBoard = lazy(() => import("../pages/ExamBoard/ExamBoard"));
+const ExamList = lazy(() => import("../pages/Exam/ExamList"));
+const ExamResult = lazy(() => import("../pages/ExamResult/ExamResult"));
 
 const Router = [
     {
@@ -32,7 +34,9 @@ const Router = [
         path: "/",
         children: [
             { path: "/home", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><StudentDashboard /></Sidebar>)} /> },
-            { path: "/exams", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
+            { path: "/exams", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamList /></Sidebar>)} /> },
+            { path: "/exams/:technologyId", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
+            { path: "/exam-result", element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamResult /></Sidebar>)} /> },
         ],
     },
 ];
