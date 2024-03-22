@@ -16,10 +16,10 @@ export default function ConfirmationDialog({ open, handleClose, handleConfirm }:
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
-            <DialogTitle>Confirmation</DialogTitle>
+            <DialogTitle>Exam Confirmation</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    Your progress will be lost if you go back. Are you sure you want to go back?
+                    Do you want to submit an exam?
                 </DialogContentText>
             </DialogContent>
             <DialogActions>

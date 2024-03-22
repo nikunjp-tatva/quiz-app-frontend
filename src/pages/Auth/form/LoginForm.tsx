@@ -66,6 +66,12 @@ const LoginForm = () => {
                     htmlFor="email"
                     mb="5px"
                     mt="25px"
+                    sx={{
+                        '&::after': {
+                            content: "' *'",
+                            color: 'red',
+                        },
+                    }}
                 >
                     Email Address
                 </Typography>
@@ -78,6 +84,12 @@ const LoginForm = () => {
                     htmlFor="password"
                     mb="5px"
                     mt="25px"
+                    sx={{
+                        '&::after': {
+                            content: "' *'",
+                            color: 'red',
+                        },
+                    }}
                 >
                     Password
                 </Typography>

@@ -5,14 +5,16 @@ import {
     type MRT_ColumnDef,
 } from 'material-react-table';
 import { useNavigate } from "react-router-dom";
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
-import { getAllExamSummary } from '../../services/exam.service';
+import { getAllExamSummary, getExamResultDetails } from '../../services/exam.service';
 import { PATH } from '../../config/config';
+import { spentTimeDateString } from '../StudentDashboard/StudentDashboard';
 
 export type ExamResultType = {
-    user: string;
-    technology: string;
+    id: string;
+    user: { name: string };
+    technology: { name: string };
     completeTime: number;
     score: number;
     status: string;
@@ -27,6 +29,11 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isRefetching, setIsRefetching] = useState(false);
 
+    const handleExamResultButtonClick = async (examResultId: string) => {
+        const response = await getExamResultDetails(examResultId);
+        history(PATH.EXAM_RESULT, { state: { result: response.data } });
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             if (data.length) {
@@ -36,11 +43,12 @@ const Dashboard = () => {
             try {
                 const response = await getAllExamSummary();
 
-                const resultData = response?.data?.results?.map((result: { technology: { name: any; }; user: { name: any; }; score: any; completeTime: any; dateAppeared: any; }) => ({
+                const resultData = response?.data?.results?.map((result: ExamResultType) => ({
+                    id: result?.id,
                     technology: result?.technology?.name,
                     user: result?.user?.name,
                     score: result?.score,
-                    status: result?.score,
+                    status: result?.status === 'pass' ? "Pass" : "Failed",
                     completeTime: result?.completeTime,
                     dateAppeared: result?.dateAppeared,
                 }));
@@ -69,6 +77,13 @@ const Dashboard = () => {
     const columns = useMemo<MRT_ColumnDef<ExamResultType>[]>(
         () => [
             {
+                accessorKey: 'id',
+                header: 'Id',
+                visibleInShowHideMenu: false,
+                enableHiding: false,
+                size: 40,
+            },
+            {
                 accessorKey: 'user',
                 header: 'User Name',
                 size: 150,
@@ -87,14 +102,15 @@ const Dashboard = () => {
                 accessorKey: 'status',
                 header: 'Status',
                 size: 20,
+                Cell: ({ renderedCellValue }) => (<Typography sx={{ color: renderedCellValue === 'Pass' ? 'green' : 'red', fontWeight: 600 }}>{renderedCellValue}</Typography>)
             },
             {
-                accessorKey: 'completeTime',
+                accessorFn: (row) => spentTimeDateString(row.completeTime),
                 header: 'Total Spent Time',
                 size: 150,
             },
             {
-                accessorKey: 'dateAppeared',
+                accessorFn: (row) => new Date(row.dateAppeared).toLocaleString(),
                 header: 'Exam Date',
                 size: 150,
             },
@@ -112,7 +128,7 @@ const Dashboard = () => {
         enableRowNumbers: true,
         enableColumnActions: false,
         muiTableBodyRowProps: { hover: false },
-
+        enableRowActions: true,
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },
 
         muiToolbarAlertBannerProps: isError
@@ -129,6 +145,12 @@ const Dashboard = () => {
             showAlertBanner: isError,
             showProgressBars: isRefetching,
         },
+        positionActionsColumn: 'last',
+        renderRowActions: ({ row }) => (
+            <Button color="primary" size='small' onClick={() => handleExamResultButtonClick(row.original.id)} variant="contained" sx={{ textTransform: 'none' }}>
+                Exam Result
+            </Button>
+        ),
     });
 
     return <MaterialReactTable table={table} />;

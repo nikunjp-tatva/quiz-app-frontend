@@ -37,8 +37,11 @@ export default function ExamList() {
                 const response = await getUserTechnologies();
                 setData(response?.data);
             } catch (error: any) {
-                if (error?.response?.status === 401 || error?.response?.status === 403) {
-                    history(PATH.LOGIN);
+                if (error?.response?.status === 401) {
+                    history(PATH.UNAUTHORIZED);
+                }
+                if (error?.response?.status === 403) {
+                    history(PATH.FORBIDDEN);
                 }
                 setIsLoading(false);
                 setIsError(true);
@@ -123,7 +126,6 @@ export default function ExamList() {
         positionActionsColumn: 'last',
         renderRowActions: ({ row }) => (
             <Button color="primary" size='small' onClick={() => {
-                console.info('View Profile', row);
                 history('/exams/' + row.original.id);
             }} variant="contained" sx={{ textTransform: 'none' }}>
                 Open Exam

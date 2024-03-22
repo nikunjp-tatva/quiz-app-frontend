@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button';
 import Badge from '@mui/material/Badge';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useBlocker } from 'react-router-dom';
 
 import QuestionList from './QuestionList';
 import BoxHeader from './BoxHeader';
@@ -14,6 +14,7 @@ import QuestionData from './QuestionData';
 import { getExamDetails, saveExamResult } from '../../services/exam.service';
 import ExamStartDialog from './ExamStartDialog';
 import { COLOR, PATH } from '../../config/config';
+import ConfirmationDialog from './ConfirmationDialog';
 
 type TechnologyType = {
     cutOff?: number;
@@ -38,6 +39,7 @@ export default function ExamBoard() {
     const { technologyId } = useParams();
 
     const [isExamStart, setIsExamStart] = useState(false);
+    const [isExamInProgress, setIsExamInProgress] = useState(false);
     const [userSpentTime, setUserSpentTime] = useState<number>(0);
 
     const [questionsData, setQuestionsData] = useState<any>({});
@@ -53,6 +55,12 @@ export default function ExamBoard() {
         noOfQuestion: undefined,
     });
     const [currentPageNo, setCurrentPageNo] = useState('1');
+
+    let blocker: any = useBlocker(
+        ({ currentLocation, nextLocation }) =>
+            isExamInProgress &&
+            currentLocation.pathname !== nextLocation.pathname
+    );
 
     const addRequiredFieldsInQuestions = (questionData: QuestionDataType[]) => {
         const updatedQuestionList = questionData.map((question: QuestionDataType, index: number) => {
@@ -154,23 +162,44 @@ export default function ExamBoard() {
     const navigate = useNavigate();
 
     const handleSubmitButtonClickEvent = async () => {
+        setIsExamInProgress(false);
 
         const response = await saveExamResult({
             technologyId: technologyDetails.id,
             submittedQuestions: Object.values(questionsData),
             completeTime: ((Date.now() - userSpentTime) / 60000),
         });
+
         navigate(PATH.EXAM_RESULT, { state: { result: response.data } });
         setUserSpentTime(0);
     }
 
     const startExam = () => {
         setIsExamStart(true);
+        setIsExamInProgress(true);
         setUserSpentTime(Date.now());
     }
 
     const examClose = () => {
+        setIsExamStart(false);
+        setIsExamInProgress(false);
         navigate(PATH.EXAMS);
+    }
+
+    const examProgressSaveConfirmation = async () => {
+        setIsExamInProgress(false);
+        await saveExamResult({
+            technologyId: technologyDetails.id,
+            submittedQuestions: Object.values(questionsData),
+            completeTime: ((Date.now() - userSpentTime) / 60000),
+        });
+
+        setUserSpentTime(0);
+        blocker.proceed();
+    }
+
+    const examProgressNotSave = () => {
+        blocker.reset()
     }
 
     return (
@@ -178,6 +207,9 @@ export default function ExamBoard() {
             <ExamStartDialog open={!isExamStart} handleClose={examClose} handleConfirm={startExam} />
         ) : (
             <Box sx={{ display: "flex", height: 'calc(100vh - 80px)' }}>
+                {blocker.state === "blocked" ? (
+                    <ConfirmationDialog open={isExamInProgress} handleConfirm={examProgressSaveConfirmation} handleClose={examProgressNotSave} />
+                ) : null}
                 <Grid container direction="row" sx={{ width: '100%', height: '100%' }}>
                     <Grid item md={8} lg={8.7} xl={9} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                         <Box

@@ -24,3 +24,9 @@ export function getExamDetails(technologyId: string) {
     headers: authHeader(),
   });
 }
+
+export function getExamResultDetails(examResultId: string) {
+  return axios.get(API_URL.EXAM.RESULT + `/${examResultId}`, {
+    headers: authHeader(),
+  });
+}

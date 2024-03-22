@@ -5,13 +5,14 @@ import {
     type MRT_ColumnDef,
 } from 'material-react-table';
 import { useNavigate } from "react-router-dom";
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
-import { getSubmittedExamsOfUser } from '../../services/exam.service';
+import { getExamResultDetails, getSubmittedExamsOfUser } from '../../services/exam.service';
 import { PATH } from '../../config/config';
 
 export type ExamResultType = {
-    technology: string;
+    id: string;
+    technology: { name: string};
     completeTime: number;
     score: number;
     status: string;
@@ -26,6 +27,11 @@ const StudentDashboard = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isRefetching, setIsRefetching] = useState(false);
 
+    const handleExamResultButtonClick = async (examResultId: string) => {
+        const response = await getExamResultDetails(examResultId);
+        history(PATH.EXAM_RESULT, { state: { result: response.data } });
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             if (data.length) {
@@ -35,18 +41,22 @@ const StudentDashboard = () => {
             try {
                 const response = await getSubmittedExamsOfUser();
 
-                const resultData = response?.data?.results?.map((result: { technology: { name: any; }; score: any; completeTime: any; dateAppeared: any; }) => ({
+                const resultData = response?.data?.results?.map((result: ExamResultType) => ({
+                    id: result?.id,
                     technology: result?.technology?.name,
                     score: result?.score,
-                    status: result?.score,
+                    status: result?.status ===  'pass' ? "Pass" : "Failed",
                     completeTime: result?.completeTime,
                     dateAppeared: result?.dateAppeared,
                 }));
 
                 setData(resultData);
             } catch (error: any) {
-                if (error?.response?.status === 401 || error?.response?.status === 403) {
-                    history(PATH.LOGIN);
+                if (error?.response?.status === 401) {
+                    history(PATH.UNAUTHORIZED);
+                }
+                if (error?.response?.status === 403) {
+                    history(PATH.FORBIDDEN);
                 }
                 setIsLoading(false);
                 setIsError(true);
@@ -64,6 +74,13 @@ const StudentDashboard = () => {
     const columns = useMemo<MRT_ColumnDef<ExamResultType>[]>(
         () => [
             {
+                accessorKey: 'id',
+                header: 'Id',
+                visibleInShowHideMenu: false,
+                enableHiding: false,
+                size: 40,
+            },
+            {
                 accessorKey: 'technology',
                 header: 'Technology Name',
                 size: 150,
@@ -77,14 +94,15 @@ const StudentDashboard = () => {
                 accessorKey: 'status',
                 header: 'Status',
                 size: 20,
+                Cell: ({ renderedCellValue }) => (<Typography sx={{ color: renderedCellValue === 'Pass' ? 'green' : 'red', fontWeight: 600}}>{renderedCellValue}</Typography>)
             },
             {
-                accessorKey: 'completeTime',
+                accessorFn: (row) => spentTimeDateString(row.completeTime),
                 header: 'Total Spent Time',
                 size: 150,
             },
             {
-                accessorKey: 'dateAppeared',
+                accessorFn: (row) => new Date(row.dateAppeared).toLocaleString(),
                 header: 'Exam Date',
                 size: 150,
             },
@@ -102,7 +120,7 @@ const StudentDashboard = () => {
         enableRowNumbers: true,
         enableColumnActions: false,
         muiTableBodyRowProps: { hover: false },
-
+        enableRowActions: true,
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },
 
         muiToolbarAlertBannerProps: isError
@@ -119,9 +137,33 @@ const StudentDashboard = () => {
             showAlertBanner: isError,
             showProgressBars: isRefetching,
         },
+        positionActionsColumn: 'last',
+        renderRowActions: ({ row }) => (
+            <Button color="primary" size='small' onClick={() => handleExamResultButtonClick(row.original.id)} variant="contained" sx={{ textTransform: 'none' }}>
+                Exam Result
+            </Button>
+        ),
     });
 
     return <MaterialReactTable table={table} />;
 };
 
 export default StudentDashboard;
+
+export function spentTimeDateString(completeTime: number): string {
+    const hours = Math.floor(completeTime / 60);
+    const minutes = Math.floor(completeTime % 60);
+    const seconds = Math.floor((completeTime % 1) * 60);
+
+    let timeString = '';
+    if (hours) {
+        timeString += `${hours} Hours `;
+    }
+    if (minutes) {
+        timeString += `${minutes} Minutes `;
+    }
+    if (seconds) {
+        timeString += `${seconds} Seconds `;
+    }
+    return timeString;
+}

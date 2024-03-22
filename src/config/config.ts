@@ -49,6 +49,7 @@ export const PATH = {
   EXAM_RESULT: '/exam-result',
   UNAUTHORIZED: '/unauthorized',
   FORBIDDEN: '/forbidden',
+  INDEX: '/',
 };
 
 export const COLOR = {

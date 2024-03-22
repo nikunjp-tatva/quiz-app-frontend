@@ -66,10 +66,12 @@ const Question = () => {
                 }));
                 setData(questionList);
             } catch (error: any) {
-                if (error?.response?.status === 401 || error?.response?.status === 403) {
-                    history(PATH.LOGIN);
+                if (error?.response?.status === 401) {
+                    history(PATH.UNAUTHORIZED);
                 }
-                
+                if (error?.response?.status === 403) {
+                    history(PATH.FORBIDDEN);
+                }
                 setIsLoading(false);
                 setIsError(true);
                 console.error(error);
@@ -230,8 +232,11 @@ const Question = () => {
                     }));
                     table.setEditingRow(null); //exit editing mode
                 } catch (error: any) {
-                    if (error?.response?.status === 401 || error?.response?.status === 403) {
-                        history(PATH.LOGIN);
+                    if (error?.response?.status === 401) {
+                        history(PATH.UNAUTHORIZED);
+                    }
+                    if (error?.response?.status === 403) {
+                        history(PATH.FORBIDDEN);
                     }
                     setErrorMessage(error?.response?.data?.message || 'Something went wrong');
                     console.error(error);
@@ -262,8 +267,11 @@ const Question = () => {
                     setData([...data, addedData.data]);
                     table.setCreatingRow(null); //exit creating mode
                 } catch (error: any) {
-                    if (error?.response?.status === 401 || error?.response?.status === 403) {
-                        history(PATH.LOGIN);
+                    if (error?.response?.status === 401) {
+                        history(PATH.UNAUTHORIZED);
+                    }
+                    if (error?.response?.status === 403) {
+                        history(PATH.FORBIDDEN);
                     }
                     setErrorMessage(error?.response?.data?.message || 'Something went wrong');
                     console.error(error);

@@ -1,4 +1,5 @@
 import React, { lazy } from "react";
+import { createBrowserRouter } from "react-router-dom";
 
 import { RoleBasedRoute } from "../components/RoleBasedRoute";
 import roles from '../config/Roles';
@@ -18,8 +19,9 @@ const ExamResult = lazy(() => import("../pages/ExamResult/ExamResult"));
 const UnAuthorized = lazy(() => import("../pages/Error/UnAuthorized"));
 const Forbidden = lazy(() => import("../pages/Error/Forbidden"));
 const NotFound = lazy(() => import("../pages/Error/NotFound"));
+const Index = lazy(() => import("../pages/Index/Index"));
 
-const Router = [
+const Router = createBrowserRouter([
     // auth routes
     {
         path: "/auth",
@@ -27,6 +29,10 @@ const Router = [
             { path: PATH.REGISTER, element: <Register /> },
             { path: PATH.LOGIN, element: <Login /> },
         ],
+    },
+    {
+        path: "/",
+        element: <Sidebar><Index /></Sidebar>
     },
     // admin routes
     {
@@ -44,7 +50,7 @@ const Router = [
             { path: PATH.HOME, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><StudentDashboard /></Sidebar>)} /> },
             { path: PATH.EXAMS, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamList /></Sidebar>)} /> },
             { path: PATH.EXAMS_TECHNOLOGY, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
-            { path: PATH.EXAM_RESULT, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamResult /></Sidebar>)} /> },
+            { path: PATH.EXAM_RESULT, element: <RoleBasedRoute roles={[roles.STUDENT, roles.EXAMINER]} element={(<Sidebar><ExamResult /></Sidebar>)} /> },
         ],
     },
     // error routes
@@ -56,6 +62,6 @@ const Router = [
             { path: "*", element: <NotFound /> },
         ],
     },
-];
+]);
 
 export default Router;

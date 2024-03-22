@@ -26,6 +26,12 @@ export default function TechnologyList({ control, errors }: any) {
                 htmlFor="technologies"
                 mb="5px"
                 mt="25px"
+                sx={{
+                    '&::after': {
+                        content: "' *'",
+                        color: 'red',
+                    },
+                }}
             >
                 Technologies
             </Typography>

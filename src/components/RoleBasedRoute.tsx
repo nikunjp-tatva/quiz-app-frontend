@@ -18,5 +18,5 @@ export function RoleBasedRoute({ roles, element }: Readonly<RoleBasedRouteProps>
         return element;
     }
 
-    return <Navigate to={PATH.UNAUTHORIZED} />;
+    return <Navigate to={PATH.FORBIDDEN} />;
 }

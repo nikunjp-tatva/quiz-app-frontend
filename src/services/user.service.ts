@@ -10,7 +10,11 @@ export function getUserDetails() {
 export function updateUserDetails(data: any) {
   return axios.patch(
     API_URL.USER.UPDATE_DETAILS,
-    { ...data },
+    {
+      name: data?.name,
+      email: data?.email,
+      password: data?.password,
+    },
     { headers: authHeader() }
   );
 }

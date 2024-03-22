@@ -29,7 +29,7 @@ export const getUser = () => {
 
 export const getToken = () => {
   const tokenStr = sessionStorage.getItem('token');
-  if (tokenStr) return JSON.parse(tokenStr).token;
+  if (tokenStr) return JSON.parse(tokenStr)?.token;
   else return null;
 };
 

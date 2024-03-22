@@ -76,6 +76,12 @@ const RegisterForm = () => {
                     component="label"
                     htmlFor="name"
                     mb="5px"
+                    sx={{
+                        '&::after': {
+                            content: "' *'",
+                            color: 'red',
+                        },
+                    }}
                 >
                     Name
                 </Typography>
@@ -88,6 +94,12 @@ const RegisterForm = () => {
                     htmlFor="email"
                     mb="5px"
                     mt="25px"
+                    sx={{
+                        '&::after': {
+                            content: "' *'",
+                            color: 'red',
+                        },
+                    }}
                 >
                     Email Address
                 </Typography>
@@ -100,6 +112,12 @@ const RegisterForm = () => {
                     htmlFor="password"
                     mb="5px"
                     mt="25px"
+                    sx={{
+                        '&::after': {
+                            content: "' *'",
+                            color: 'red',
+                        },
+                    }}
                 >
                     Password
                 </Typography>
@@ -112,6 +130,12 @@ const RegisterForm = () => {
                     htmlFor="role"
                     mb="5px"
                     mt="25px"
+                    sx={{
+                        '&::after': {
+                            content: "' *'",
+                            color: 'red',
+                        },
+                    }}
                 >
                     Role
                 </Typography>
