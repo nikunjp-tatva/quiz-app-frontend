@@ -1,14 +1,18 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-import { getUser } from '../services/auth.service';
-import { PATH } from '../config/config';
+import { getUser } from "../services/auth.service";
+import { PATH } from "../config/config";
 
-interface RoleBasedRouteProps extends React.PropsWithChildren<{ roles: string[]; }> {
+interface RoleBasedRouteProps
+    extends React.PropsWithChildren<{ roles: string[] }> {
     element: React.ReactElement;
 }
 
-export function RoleBasedRoute({ roles, element }: Readonly<RoleBasedRouteProps>) {
+export function RoleBasedRoute({
+    roles,
+    element,
+}: Readonly<RoleBasedRouteProps>) {
     const userRole = getUser()?.role;
 
     if (!userRole) {

@@ -1,14 +1,24 @@
-import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import React from "react";
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    Button,
+} from "@mui/material";
 
 type ConfirmationDialogType = {
     open: boolean;
     handleClose: () => void;
     handleConfirm: () => void;
-}
+};
 
-export default function ConfirmationDialog({ open, handleClose, handleConfirm }: Readonly<ConfirmationDialogType>) {
-
+export default function ConfirmationDialog({
+    open,
+    handleClose,
+    handleConfirm,
+}: Readonly<ConfirmationDialogType>) {
     return (
         <Dialog
             open={open}
@@ -18,9 +28,7 @@ export default function ConfirmationDialog({ open, handleClose, handleConfirm }:
         >
             <DialogTitle>Exam Confirmation</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    Do you want to submit an exam?
-                </DialogContentText>
+                <DialogContentText>Do you want to submit an exam?</DialogContentText>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">

@@ -62,7 +62,7 @@ const Login = () => {
                                     sx={{
                                         textDecoration: "none",
                                         color: "primary.main",
-                                        padding: "5px 7px"
+                                        padding: "5px 7px",
                                     }}
                                 >
                                     Create an account

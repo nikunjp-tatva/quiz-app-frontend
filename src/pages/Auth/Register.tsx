@@ -62,7 +62,7 @@ const Register = () => {
                                     sx={{
                                         textDecoration: "none",
                                         color: "primary.main",
-                                        padding: "5px 7px"
+                                        padding: "5px 7px",
                                     }}
                                 >
                                     Sign In
@@ -73,7 +73,7 @@ const Register = () => {
                 </Grid>
             </Box>
         </PageContainer>
-    )
+    );
 };
 
 export default Register;

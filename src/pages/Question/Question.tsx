@@ -1,27 +1,31 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import {
     MaterialReactTable,
     useMaterialReactTable,
     type MRT_ColumnDef,
     MRT_EditActionButtons,
     MRT_Row,
-} from 'material-react-table';
-import Button from '@mui/material/Button';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import { useNavigate } from 'react-router-dom';
+} from "material-react-table";
+import Button from "@mui/material/Button";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import { useNavigate } from "react-router-dom";
 
-import InfoTextIcon from '../../common/InfoTextIcon';
+import InfoTextIcon from "../../common/InfoTextIcon";
 import {
     convertOptionStringToArray,
     convertOptionsArrayToString,
-    validateQuestion
-} from './questionValidation';
-import { addQuestion, getQuestions, updateQuestionById } from '../../services/question.service';
-import { getTechnologiesList } from '../../services/technology.service';
-import ErrorMessage from '../../common/ErrorMessage';
-import { PATH } from '../../config/config';
+    validateQuestion,
+} from "./questionValidation";
+import {
+    addQuestion,
+    getQuestions,
+    updateQuestionById,
+} from "../../services/question.service";
+import { getTechnologiesList } from "../../services/technology.service";
+import ErrorMessage from "../../common/ErrorMessage";
+import { PATH } from "../../config/config";
 
 export type QuestionType = {
     id: string;
@@ -31,9 +35,17 @@ export type QuestionType = {
     correctOption: string;
 };
 
-const CustomSelectEditor = (row: MRT_Row<QuestionType>, technologyList: any[]) => {
+const CustomSelectEditor = (
+    row: MRT_Row<QuestionType>,
+    technologyList: any[],
+) => {
     return (
-        <div>{technologyList.find((item) => item.value === row.original.technology)?.label}</div>
+        <div>
+            {
+                technologyList.find((item) => item.value === row.original.technology)
+                    ?.label
+            }
+        </div>
     );
 };
 
@@ -42,7 +54,7 @@ const Question = () => {
 
     const [data, setData] = useState<QuestionType[]>([]);
     const [isError, setIsError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isRefetching, setIsRefetching] = useState(false);
     const [technologyList, setTechnologyList] = useState<any[]>([]);
@@ -62,7 +74,7 @@ const Question = () => {
                     questionText: question.questionText,
                     technology: question?.technology?.id,
                     options: question?.options,
-                    correctOption: question?.correctOption
+                    correctOption: question?.correctOption,
                 }));
                 setData(questionList);
             } catch (error: any) {
@@ -83,10 +95,12 @@ const Question = () => {
         };
 
         getTechnologiesList().then(({ data }) => {
-            setTechnologyList(data.map((item: { name: string; id: string; }) => ({
-                label: item.name,
-                value: item.id
-            })));
+            setTechnologyList(
+                data.map((item: { name: string; id: string }) => ({
+                    label: item.name,
+                    value: item.id,
+                })),
+            );
 
             fetchData();
         });
@@ -101,19 +115,20 @@ const Question = () => {
     const columns = useMemo<MRT_ColumnDef<QuestionType>[]>(
         () => [
             {
-                accessorKey: 'id',
-                header: 'Id',
+                accessorKey: "id",
+                header: "Id",
                 size: 80,
                 visibleInShowHideMenu: false,
                 enableHiding: false,
                 Edit: () => null,
             },
             {
-                id: 'technology',
-                accessorFn: (row) => technologyList.find((item) => item.value === row.technology)?.value,
+                id: "technology",
+                accessorFn: (row) =>
+                    technologyList.find((item) => item.value === row.technology)?.value,
                 Cell: ({ row }) => CustomSelectEditor(row, technologyList),
-                header: 'Technology Name',
-                editVariant: 'select',
+                header: "Technology Name",
+                editVariant: "select",
                 editSelectOptions: technologyList,
                 size: 150,
                 enableHiding: false,
@@ -131,8 +146,8 @@ const Question = () => {
                 },
             },
             {
-                accessorKey: 'questionText',
-                header: 'Question Text',
+                accessorKey: "questionText",
+                header: "Question Text",
                 size: 150,
                 enableHiding: false,
                 muiEditTextFieldProps: {
@@ -149,10 +164,15 @@ const Question = () => {
                 },
             },
             {
-                accessorKey: 'options',
-                header: (<InfoTextIcon headerName="Options" titleText='Enter in string with "," separated. Eg. (Yes, No, All)' />),
+                accessorKey: "options",
+                header: (
+                    <InfoTextIcon
+                        headerName="Options"
+                        titleText='Enter in string with "," separated. Eg. (Yes, No, All)'
+                    />
+                ),
                 accessorFn: (row) => {
-                    if (typeof row?.options === 'object' && row?.options?.length) {
+                    if (typeof row?.options === "object" && row?.options?.length) {
                         return convertOptionsArrayToString(row.options);
                     }
                     return row.options;
@@ -171,8 +191,8 @@ const Question = () => {
                 },
             },
             {
-                accessorKey: 'correctOption',
-                header: 'Correct Option',
+                accessorKey: "correctOption",
+                header: "Correct Option",
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -195,9 +215,9 @@ const Question = () => {
         columns,
         data,
         enableEditing: true,
-        editDisplayMode: 'modal',
-        createDisplayMode: 'modal',
-        positionActionsColumn: 'last',
+        editDisplayMode: "modal",
+        createDisplayMode: "modal",
+        positionActionsColumn: "last",
         enableDensityToggle: false,
         enableFullScreenToggle: false,
         enableColumnFilters: false,
@@ -205,9 +225,11 @@ const Question = () => {
         enableColumnActions: false,
         muiTableBodyRowProps: { hover: false },
 
-        onEditingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onEditingRowCancel: () => {
+            setValidationErrors({});
+            setErrorMessage("");
+        },
         onEditingRowSave: async ({ table, values }) => {
-
             const newValidationErrors = validateQuestion(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
                 setValidationErrors(newValidationErrors);
@@ -220,16 +242,18 @@ const Question = () => {
             updatedValues.options = convertOptionStringToArray(values.options);
 
             const updateQuestion = async () => {
-                setErrorMessage('');
+                setErrorMessage("");
                 try {
                     await updateQuestionById(values.id, updatedValues);
-                    setData(prev => prev.map((item) => {
-                        if (item.id === values.id) {
-                            values.options = convertOptionStringToArray(values.options);
-                            return values;
-                        }
-                        return item;
-                    }));
+                    setData((prev) =>
+                        prev.map((item) => {
+                            if (item.id === values.id) {
+                                values.options = convertOptionStringToArray(values.options);
+                                return values;
+                            }
+                            return item;
+                        }),
+                    );
                     table.setEditingRow(null); //exit editing mode
                 } catch (error: any) {
                     if (error?.response?.status === 401) {
@@ -238,18 +262,21 @@ const Question = () => {
                     if (error?.response?.status === 403) {
                         history(PATH.FORBIDDEN);
                     }
-                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    setErrorMessage(
+                        error?.response?.data?.message || "Something went wrong",
+                    );
                     console.error(error);
                     return;
                 }
-                setErrorMessage('');
+                setErrorMessage("");
             };
             await updateQuestion();
-
         },
-        onCreatingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onCreatingRowCancel: () => {
+            setValidationErrors({});
+            setErrorMessage("");
+        },
         onCreatingRowSave: async ({ table, values }) => {
-
             const newValidationErrors = validateQuestion(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
                 setValidationErrors(newValidationErrors);
@@ -261,9 +288,12 @@ const Question = () => {
             updatedValues.options = convertOptionStringToArray(values.options);
 
             const addQuestionToData = async () => {
-                setErrorMessage('');
+                setErrorMessage("");
                 try {
-                    const addedData = await addQuestion({ ...updatedValues, id: undefined });
+                    const addedData = await addQuestion({
+                        ...updatedValues,
+                        id: undefined,
+                    });
                     setData([...data, addedData.data]);
                     table.setCreatingRow(null); //exit creating mode
                 } catch (error: any) {
@@ -273,22 +303,23 @@ const Question = () => {
                     if (error?.response?.status === 403) {
                         history(PATH.FORBIDDEN);
                     }
-                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    setErrorMessage(
+                        error?.response?.data?.message || "Something went wrong",
+                    );
                     console.error(error);
                     return;
                 }
-                setErrorMessage('');
+                setErrorMessage("");
             };
             await addQuestionToData();
-
         },
 
         initialState: { showColumnFilters: false, columnVisibility: { id: false } },
 
         muiToolbarAlertBannerProps: isError
             ? {
-                color: 'error',
-                children: 'Error loading data',
+                color: "error",
+                children: "Error loading data",
             }
             : undefined,
 
@@ -307,23 +338,26 @@ const Question = () => {
                 Add New Question
             </Button>
         ),
-        renderCreateRowDialogContent: ({ table, row, internalEditComponents }: any) => {
+        renderCreateRowDialogContent: ({
+            table,
+            row,
+            internalEditComponents,
+        }: any) => {
             return (
                 <>
                     {errorMessage && <ErrorMessage message={errorMessage} />}
 
                     <DialogTitle variant="h5"> Add Question</DialogTitle>
                     <DialogContent
-                        sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                        sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
                     >
                         {internalEditComponents}
-
                     </DialogContent>
                     <DialogActions>
                         <MRT_EditActionButtons variant="text" table={table} row={row} />
                     </DialogActions>
                 </>
-            )
+            );
         },
         renderEditRowDialogContent: ({ internalEditComponents, row, table }) => {
             return (
@@ -332,7 +366,7 @@ const Question = () => {
 
                     <DialogTitle variant="h5"> Edit Question</DialogTitle>
                     <DialogContent
-                        sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                        sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
                     >
                         {internalEditComponents}
                     </DialogContent>

@@ -1,18 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import {
     MaterialReactTable,
     useMaterialReactTable,
     type MRT_ColumnDef,
-} from 'material-react-table';
+} from "material-react-table";
 import { useNavigate } from "react-router-dom";
-import { Button, Typography } from '@mui/material';
+import { Button, Typography } from "@mui/material";
 
-import { getExamResultDetails, getSubmittedExamsOfUser } from '../../services/exam.service';
-import { PATH } from '../../config/config';
+import {
+    getExamResultDetails,
+    getSubmittedExamsOfUser,
+} from "../../services/exam.service";
+import { PATH } from "../../config/config";
 
 export type ExamResultType = {
     id: string;
-    technology: { name: string};
+    technology: { name: string };
     completeTime: number;
     score: number;
     status: string;
@@ -30,7 +33,7 @@ const StudentDashboard = () => {
     const handleExamResultButtonClick = async (examResultId: string) => {
         const response = await getExamResultDetails(examResultId);
         history(PATH.EXAM_RESULT, { state: { result: response.data } });
-    }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,14 +44,16 @@ const StudentDashboard = () => {
             try {
                 const response = await getSubmittedExamsOfUser();
 
-                const resultData = response?.data?.results?.map((result: ExamResultType) => ({
-                    id: result?.id,
-                    technology: result?.technology?.name,
-                    score: result?.score,
-                    status: result?.status ===  'pass' ? "Pass" : "Failed",
-                    completeTime: result?.completeTime,
-                    dateAppeared: result?.dateAppeared,
-                }));
+                const resultData = response?.data?.results?.map(
+                    (result: ExamResultType) => ({
+                        id: result?.id,
+                        technology: result?.technology?.name,
+                        score: result?.score,
+                        status: result?.status === "pass" ? "Pass" : "Failed",
+                        completeTime: result?.completeTime,
+                        dateAppeared: result?.dateAppeared,
+                    }),
+                );
 
                 setData(resultData);
             } catch (error: any) {
@@ -74,36 +79,45 @@ const StudentDashboard = () => {
     const columns = useMemo<MRT_ColumnDef<ExamResultType>[]>(
         () => [
             {
-                accessorKey: 'id',
-                header: 'Id',
+                accessorKey: "id",
+                header: "Id",
                 visibleInShowHideMenu: false,
                 enableHiding: false,
                 size: 40,
             },
             {
-                accessorKey: 'technology',
-                header: 'Technology Name',
+                accessorKey: "technology",
+                header: "Technology Name",
                 size: 150,
             },
             {
-                accessorKey: 'score',
-                header: 'Score',
+                accessorKey: "score",
+                header: "Score",
                 size: 20,
             },
             {
-                accessorKey: 'status',
-                header: 'Status',
+                accessorKey: "status",
+                header: "Status",
                 size: 20,
-                Cell: ({ renderedCellValue }) => (<Typography sx={{ color: renderedCellValue === 'Pass' ? 'green' : 'red', fontWeight: 600}}>{renderedCellValue}</Typography>)
+                Cell: ({ renderedCellValue }) => (
+                    <Typography
+                        sx={{
+                            color: renderedCellValue === "Pass" ? "green" : "red",
+                            fontWeight: 600,
+                        }}
+                    >
+                        {renderedCellValue}
+                    </Typography>
+                ),
             },
             {
                 accessorFn: (row) => spentTimeDateString(row.completeTime),
-                header: 'Total Spent Time',
+                header: "Total Spent Time",
                 size: 150,
             },
             {
                 accessorFn: (row) => new Date(row.dateAppeared).toLocaleString(),
-                header: 'Exam Date',
+                header: "Exam Date",
                 size: 150,
             },
         ],
@@ -125,21 +139,29 @@ const StudentDashboard = () => {
 
         muiToolbarAlertBannerProps: isError
             ? {
-                color: 'error',
-                children: 'Error loading data',
+                color: "error",
+                children: "Error loading data",
             }
             : undefined,
         renderTopToolbarCustomActions: ({ table }) => (
-            <Typography variant='h4' fontWeight={500}>Exams Summary</Typography>
+            <Typography variant="h4" fontWeight={500}>
+                Exams Summary
+            </Typography>
         ),
         state: {
             isLoading,
             showAlertBanner: isError,
             showProgressBars: isRefetching,
         },
-        positionActionsColumn: 'last',
+        positionActionsColumn: "last",
         renderRowActions: ({ row }) => (
-            <Button color="primary" size='small' onClick={() => handleExamResultButtonClick(row.original.id)} variant="contained" sx={{ textTransform: 'none' }}>
+            <Button
+                color="primary"
+                size="small"
+                onClick={() => handleExamResultButtonClick(row.original.id)}
+                variant="contained"
+                sx={{ textTransform: "none" }}
+            >
                 Exam Result
             </Button>
         ),
@@ -155,7 +177,7 @@ export function spentTimeDateString(completeTime: number): string {
     const minutes = Math.floor(completeTime % 60);
     const seconds = Math.floor((completeTime % 1) * 60);
 
-    let timeString = '';
+    let timeString = "";
     if (hours) {
         timeString += `${hours} Hours `;
     }

@@ -1,20 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import {
     MaterialReactTable,
     useMaterialReactTable,
     type MRT_ColumnDef,
     MRT_EditActionButtons,
-} from 'material-react-table';
-import Button from '@mui/material/Button';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
+} from "material-react-table";
+import Button from "@mui/material/Button";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 import { useNavigate } from "react-router-dom";
 
-import { validateTechnology } from './technologyValidation';
-import { addTechnology, getTechnologies, updateTechnologyById } from '../../services/technology.service';
-import ErrorMessage from '../../common/ErrorMessage';
-import { PATH } from '../../config/config';
+import { validateTechnology } from "./technologyValidation";
+import {
+    addTechnology,
+    getTechnologies,
+    updateTechnologyById,
+} from "../../services/technology.service";
+import ErrorMessage from "../../common/ErrorMessage";
+import { PATH } from "../../config/config";
 
 export type TechnologyType = {
     id: string;
@@ -30,7 +34,7 @@ const Technology = () => {
 
     const [data, setData] = useState<TechnologyType[]>([]);
     const [isError, setIsError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isRefetching, setIsRefetching] = useState(false);
 
@@ -63,7 +67,6 @@ const Technology = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
     const [validationErrors, setValidationErrors] = useState<
         Record<string, string | undefined>
     >({});
@@ -71,16 +74,16 @@ const Technology = () => {
     const columns = useMemo<MRT_ColumnDef<TechnologyType>[]>(
         () => [
             {
-                accessorKey: 'id',
-                header: 'Id',
+                accessorKey: "id",
+                header: "Id",
                 visibleInShowHideMenu: false,
                 enableHiding: false,
                 size: 80,
                 Edit: () => null,
             },
             {
-                accessorKey: 'name',
-                header: 'Technology Name',
+                accessorKey: "name",
+                header: "Technology Name",
                 size: 150,
                 enableHiding: false,
                 muiEditTextFieldProps: {
@@ -97,16 +100,16 @@ const Technology = () => {
                 },
             },
             {
-                accessorKey: 'description',
-                header: 'Description',
+                accessorKey: "description",
+                header: "Description",
                 size: 150,
                 muiEditTextFieldProps: {
                     onChange: () => setErrorMessage(""),
                 },
             },
             {
-                accessorKey: 'noOfQuestion',
-                header: 'Total Questions (Numbers only)',
+                accessorKey: "noOfQuestion",
+                header: "Total Questions (Numbers only)",
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -122,8 +125,8 @@ const Technology = () => {
                 },
             },
             {
-                accessorKey: 'duration',
-                header: 'Duration (In Min.) ',
+                accessorKey: "duration",
+                header: "Duration (In Min.) ",
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -139,8 +142,8 @@ const Technology = () => {
                 },
             },
             {
-                accessorKey: 'cutOff',
-                header: 'Cut-Off Marks (Numbers only)',
+                accessorKey: "cutOff",
+                header: "Cut-Off Marks (Numbers only)",
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -163,9 +166,9 @@ const Technology = () => {
         columns,
         data,
         enableEditing: true,
-        editDisplayMode: 'modal',
-        createDisplayMode: 'modal',
-        positionActionsColumn: 'last',
+        editDisplayMode: "modal",
+        createDisplayMode: "modal",
+        positionActionsColumn: "last",
         enableDensityToggle: false,
         enableFullScreenToggle: false,
         enableColumnFilterModes: false,
@@ -174,7 +177,10 @@ const Technology = () => {
         enableColumnActions: false,
         muiTableBodyRowProps: { hover: false },
 
-        onEditingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onEditingRowCancel: () => {
+            setValidationErrors({});
+            setErrorMessage("");
+        },
         onEditingRowSave: async ({ table, values }) => {
             const newValidationErrors = validateTechnology(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
@@ -185,15 +191,17 @@ const Technology = () => {
             setValidationErrors({});
 
             const updateTechnologyDetails = async () => {
-                setErrorMessage('');
+                setErrorMessage("");
                 try {
                     await updateTechnologyById(values.id, values);
-                    setData(prev => prev.map((item) => {
-                        if (item.id === values.id) {
-                            return values;
-                        }
-                        return item;
-                    }))
+                    setData((prev) =>
+                        prev.map((item) => {
+                            if (item.id === values.id) {
+                                return values;
+                            }
+                            return item;
+                        }),
+                    );
                     table.setEditingRow(null); //exit editing mode
                 } catch (error: any) {
                     if (error?.response?.status === 401) {
@@ -202,17 +210,21 @@ const Technology = () => {
                     if (error?.response?.status === 403) {
                         history(PATH.FORBIDDEN);
                     }
-                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    setErrorMessage(
+                        error?.response?.data?.message || "Something went wrong",
+                    );
                     console.error(error);
                     return;
                 }
-                setErrorMessage('');
+                setErrorMessage("");
             };
             await updateTechnologyDetails();
         },
-        onCreatingRowCancel: () => { setValidationErrors({}); setErrorMessage("") },
+        onCreatingRowCancel: () => {
+            setValidationErrors({});
+            setErrorMessage("");
+        },
         onCreatingRowSave: async ({ table, values }) => {
-
             const newValidationErrors = validateTechnology(values);
             if (Object.values(newValidationErrors).some((error) => error)) {
                 setValidationErrors(newValidationErrors);
@@ -221,7 +233,7 @@ const Technology = () => {
             setValidationErrors({});
 
             const addTechnologyDetails = async () => {
-                setErrorMessage('');
+                setErrorMessage("");
                 try {
                     const addedData = await addTechnology(values);
                     setData([...data, addedData.data]);
@@ -234,11 +246,13 @@ const Technology = () => {
                     if (error?.response?.status === 403) {
                         history(PATH.FORBIDDEN);
                     }
-                    setErrorMessage(error?.response?.data?.message || 'Something went wrong');
+                    setErrorMessage(
+                        error?.response?.data?.message || "Something went wrong",
+                    );
                     console.error(error);
                     return;
                 }
-                setErrorMessage('');
+                setErrorMessage("");
             };
             await addTechnologyDetails();
         },
@@ -247,8 +261,8 @@ const Technology = () => {
 
         muiToolbarAlertBannerProps: isError
             ? {
-                color: 'error',
-                children: 'Error loading data',
+                color: "error",
+                children: "Error loading data",
             }
             : undefined,
         state: {
@@ -272,7 +286,7 @@ const Technology = () => {
 
                 <DialogTitle variant="h5"> Add Technology</DialogTitle>
                 <DialogContent
-                    sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                    sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
                 >
                     {internalEditComponents}
                 </DialogContent>
@@ -288,7 +302,7 @@ const Technology = () => {
 
                     <DialogTitle variant="h5"> Edit Technology</DialogTitle>
                     <DialogContent
-                        sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                        sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
                     >
                         {internalEditComponents}
                     </DialogContent>

@@ -27,18 +27,16 @@ const LoginForm = () => {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
-    const resolver = useYupValidationResolver(loginValidationSchema)
+    const resolver = useYupValidationResolver(loginValidationSchema);
 
-    const { handleSubmit, control } = useForm<ILoginFormInput>(
-        {
-            defaultValues,
-            resolver,
-        },
-    );
+    const { handleSubmit, control } = useForm<ILoginFormInput>({
+        defaultValues,
+        resolver,
+    });
 
     const onSubmit = async (data: ILoginFormInput) => {
         try {
-            setError('');
+            setError("");
             setLoading(true);
             const userDetails = await login(data.email, data.password);
             setLoading(false);
@@ -51,21 +49,22 @@ const LoginForm = () => {
         } catch (error: any) {
             setLoading(false);
             console.log({ error: error });
-            if (error?.response?.status === 401) setError(error?.response?.data?.message);
+            if (error?.response?.status === 401)
+                setError(error?.response?.data?.message);
             else setError("Something went wrong. Please try again later.");
         }
     };
 
     return (
         <Box>
-            {error && <ErrorMessage message={error} style={{ padding: 0, paddingBottom: 2, marginTop: -2 }} />}
+            {error && (
+                <ErrorMessage
+                    message={error}
+                    style={{ padding: 0, paddingBottom: 2, marginTop: -2 }}
+                />
+            )}
 
-            <Typography
-                fontWeight="400"
-                variant="h4"
-                textAlign="center"
-                mb={-2}
-            >
+            <Typography fontWeight="400" variant="h4" textAlign="center" mb={-2}>
                 Login
             </Typography>
 
@@ -78,15 +77,20 @@ const LoginForm = () => {
                     mb="5px"
                     mt="25px"
                     sx={{
-                        '&::after': {
+                        "&::after": {
                             content: "' *'",
-                            color: 'red',
+                            color: "red",
                         },
                     }}
                 >
                     Email Address
                 </Typography>
-                <FormInputText name="email" control={control} type="email" clearError={() => setError('')} />
+                <FormInputText
+                    name="email"
+                    control={control}
+                    type="email"
+                    clearError={() => setError("")}
+                />
 
                 <Typography
                     variant="subtitle1"
@@ -96,15 +100,20 @@ const LoginForm = () => {
                     mb="5px"
                     mt="25px"
                     sx={{
-                        '&::after': {
+                        "&::after": {
                             content: "' *'",
-                            color: 'red',
+                            color: "red",
                         },
                     }}
                 >
                     Password
                 </Typography>
-                <FormInputText name="password" control={control} type="password" clearError={() => setError('')} />
+                <FormInputText
+                    name="password"
+                    control={control}
+                    type="password"
+                    clearError={() => setError("")}
+                />
             </Stack>
 
             <Button

@@ -9,7 +9,11 @@ import { Controller } from "react-hook-form";
 
 import { FormInputProps } from "./FormInputProps";
 
-export const FormInputRadio: React.FC<FormInputProps> = ({ name, control, options }) => {
+export const FormInputRadio: React.FC<FormInputProps> = ({
+    name,
+    control,
+    options,
+}) => {
     const generateRadioOptions = () => {
         return options?.map((singleOption) => (
             <FormControlLabel
@@ -26,9 +30,7 @@ export const FormInputRadio: React.FC<FormInputProps> = ({ name, control, option
             <Controller
                 name={name}
                 control={control}
-                render={({
-                    field: { onChange, value },
-                }) => (
+                render={({ field: { onChange, value } }) => (
                     <RadioGroup
                         value={value}
                         onChange={onChange}

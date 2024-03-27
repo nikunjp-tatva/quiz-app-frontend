@@ -1,6 +1,6 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import React from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 export default function BoxHeader({ title }: Readonly<{ title: string }>) {
     return (
@@ -10,11 +10,9 @@ export default function BoxHeader({ title }: Readonly<{ title: string }>) {
             justifyContent="center"
             alignItems="center"
         >
-            <Typography
-                fontWeight={600}
-                sx={{ fontSize: "1.1rem" }}>
+            <Typography fontWeight={600} sx={{ fontSize: "1.1rem" }}>
                 {title}
             </Typography>
         </Box>
-    )
+    );
 }

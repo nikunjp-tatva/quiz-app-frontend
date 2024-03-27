@@ -1,17 +1,20 @@
-import React from 'react';
-import { Info } from '@mui/icons-material';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
+import React from "react";
+import { Info } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
-export default function InfoTextIcon({ headerName, titleText }: Readonly<{ headerName: string; titleText: string; }>) {
+export default function InfoTextIcon({
+    headerName,
+    titleText,
+}: Readonly<{ headerName: string; titleText: string }>) {
     return (
         <>
             {headerName}
             <Tooltip title={titleText}>
-                <IconButton size="small" sx={{ marginTop: '-6px' }}>
+                <IconButton size="small" sx={{ marginTop: "-6px" }}>
                     <Info />
                 </IconButton>
             </Tooltip>
         </>
-    )
+    );
 }

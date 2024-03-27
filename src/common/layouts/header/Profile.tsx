@@ -1,12 +1,12 @@
 import React from "react";
-import AccountCircle from "@mui/icons-material/AccountCircle"
-import IconButton from "@mui/material/IconButton/IconButton"
-import Menu from "@mui/material/Menu"
-import MenuItem from "@mui/material/MenuItem"
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import IconButton from "@mui/material/IconButton/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ListItemText from "@mui/material/ListItemText";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 
@@ -31,16 +31,16 @@ const Profile = () => {
     const handleLogout = () => {
         removeUserSession();
         history(PATH.LOGIN);
-    }
+    };
 
     const handleProfileViewOpen = () => {
         setIsProfileOpen(true);
-    }
+    };
 
     const closeProfilePage = () => {
         setAnchorEl(null);
         setIsProfileOpen(false);
-    }
+    };
 
     const userName = getUser()?.name;
 
@@ -54,29 +54,35 @@ const Profile = () => {
                 onClick={handleMenu}
                 color="inherit"
             >
-                {userName ? (<Avatar
-                    sx={{ bgcolor: COLOR.BLUE }}
-                    alt={userName}
-                >
-                    {userName.charAt(0).toUpperCase()}
-                </Avatar>) : (<AccountCircle />)}
+                {userName ? (
+                    <Avatar sx={{ bgcolor: COLOR.BLUE }} alt={userName}>
+                        {userName.charAt(0).toUpperCase()}
+                    </Avatar>
+                ) : (
+                    <AccountCircle />
+                )}
             </IconButton>
             <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
+                    vertical: "top",
+                    horizontal: "right",
                 }}
                 keepMounted
                 transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
+                    vertical: "top",
+                    horizontal: "right",
                 }}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={() => { handleProfileViewOpen(); handleClose(); }}>
+                <MenuItem
+                    onClick={() => {
+                        handleProfileViewOpen();
+                        handleClose();
+                    }}
+                >
                     <ListItemIcon>
                         <ManageAccountsIcon width={20} />
                     </ListItemIcon>
@@ -86,11 +92,14 @@ const Profile = () => {
                     <ListItemIcon>
                         <LogoutIcon width={20} />
                     </ListItemIcon>
-                    <ListItemText>Logout</ListItemText></MenuItem>
+                    <ListItemText>Logout</ListItemText>
+                </MenuItem>
             </Menu>
-            {isProfileOpen && <ProfileModal open={isProfileOpen} handleClose={closeProfilePage} />}
-        </div >)
-
-}
+            {isProfileOpen && (
+                <ProfileModal open={isProfileOpen} handleClose={closeProfilePage} />
+            )}
+        </div>
+    );
+};
 
 export default Profile;

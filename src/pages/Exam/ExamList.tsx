@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import {
     MaterialReactTable,
     useMaterialReactTable,
     type MRT_ColumnDef,
-} from 'material-react-table';
+} from "material-react-table";
 import { useNavigate } from "react-router-dom";
-import { Button, Typography } from '@mui/material';
+import { Button, Typography } from "@mui/material";
 
-import { getUserTechnologies } from '../../services/technology.service';
-import { PATH } from '../../config/config';
+import { getUserTechnologies } from "../../services/technology.service";
+import { PATH } from "../../config/config";
 
 export type TechnologyType = {
     name: string;
@@ -59,35 +59,35 @@ export default function ExamList() {
     const columns = useMemo<MRT_ColumnDef<TechnologyType>[]>(
         () => [
             {
-                accessorKey: 'id',
-                header: 'Id',
+                accessorKey: "id",
+                header: "Id",
                 size: 80,
                 visibleInShowHideMenu: false,
                 enableHiding: false,
             },
             {
-                accessorKey: 'name',
-                header: 'Technology Name',
+                accessorKey: "name",
+                header: "Technology Name",
                 size: 150,
             },
             {
-                accessorKey: 'description',
-                header: 'Description',
+                accessorKey: "description",
+                header: "Description",
                 size: 150,
             },
             {
-                accessorKey: 'noOfQuestion',
-                header: 'No of Questions',
+                accessorKey: "noOfQuestion",
+                header: "No of Questions",
                 size: 20,
             },
             {
-                accessorKey: 'duration',
-                header: 'Exam Duration',
+                accessorKey: "duration",
+                header: "Exam Duration",
                 size: 150,
             },
             {
-                accessorKey: 'cutOff',
-                header: 'Cut Off Marks',
+                accessorKey: "cutOff",
+                header: "Cut Off Marks",
                 size: 150,
             },
         ],
@@ -111,27 +111,35 @@ export default function ExamList() {
 
         muiToolbarAlertBannerProps: isError
             ? {
-                color: 'error',
-                children: 'Error loading data',
+                color: "error",
+                children: "Error loading data",
             }
             : undefined,
         renderTopToolbarCustomActions: ({ table }) => (
-            <Typography variant='h4' fontWeight={500}>Exam List</Typography>
+            <Typography variant="h4" fontWeight={500}>
+                Exam List
+            </Typography>
         ),
         state: {
             isLoading,
             showAlertBanner: isError,
             showProgressBars: isRefetching,
         },
-        positionActionsColumn: 'last',
+        positionActionsColumn: "last",
         renderRowActions: ({ row }) => (
-            <Button color="primary" size='small' onClick={() => {
-                history('/exams/' + row.original.id);
-            }} variant="contained" sx={{ textTransform: 'none' }}>
+            <Button
+                color="primary"
+                size="small"
+                onClick={() => {
+                    history("/exams/" + row.original.id);
+                }}
+                variant="contained"
+                sx={{ textTransform: "none" }}
+            >
                 Open Exam
             </Button>
-        )
+        ),
     });
 
     return <MaterialReactTable table={table} />;
-};
+}

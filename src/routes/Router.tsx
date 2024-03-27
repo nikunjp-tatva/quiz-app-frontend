@@ -2,7 +2,7 @@ import React, { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import { RoleBasedRoute } from "../components/RoleBasedRoute";
-import roles from '../config/Roles';
+import roles from "../config/Roles";
 import ExamBoard from "../pages/ExamBoard/ExamBoard";
 import { PATH } from "../config/config";
 
@@ -13,7 +13,9 @@ const Sidebar = lazy(() => import("../common/layouts/sidebar/Sidebar"));
 const Technology = lazy(() => import("../pages/Technology/Technology"));
 const Question = lazy(() => import("../pages/Question/Question"));
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
-const StudentDashboard = lazy(() => import("../pages/StudentDashboard/StudentDashboard"));
+const StudentDashboard = lazy(
+    () => import("../pages/StudentDashboard/StudentDashboard"),
+);
 const ExamList = lazy(() => import("../pages/Exam/ExamList"));
 const ExamResult = lazy(() => import("../pages/ExamResult/ExamResult"));
 const UnAuthorized = lazy(() => import("../pages/Error/UnAuthorized"));
@@ -32,25 +34,113 @@ const Router = createBrowserRouter([
     },
     {
         path: "/",
-        element: <Sidebar><Index /></Sidebar>
+        element: (
+            <Sidebar>
+                <Index />
+            </Sidebar>
+        ),
     },
     // admin routes
     {
         path: "/",
         children: [
-            { path: PATH.TECHNOLOGIES, element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Technology /></Sidebar>)} /> },
-            { path: PATH.QUESTIONS, element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Question /></Sidebar>)} /> },
-            { path: PATH.DASHBOARD, element: <RoleBasedRoute roles={[roles.EXAMINER]} element={(<Sidebar><Dashboard /></Sidebar>)} /> },
+            {
+                path: PATH.TECHNOLOGIES,
+                element: (
+                    <RoleBasedRoute
+                        roles={[roles.EXAMINER]}
+                        element={
+                            <Sidebar>
+                                <Technology />
+                            </Sidebar>
+                        }
+                    />
+                ),
+            },
+            {
+                path: PATH.QUESTIONS,
+                element: (
+                    <RoleBasedRoute
+                        roles={[roles.EXAMINER]}
+                        element={
+                            <Sidebar>
+                                <Question />
+                            </Sidebar>
+                        }
+                    />
+                ),
+            },
+            {
+                path: PATH.DASHBOARD,
+                element: (
+                    <RoleBasedRoute
+                        roles={[roles.EXAMINER]}
+                        element={
+                            <Sidebar>
+                                <Dashboard />
+                            </Sidebar>
+                        }
+                    />
+                ),
+            },
         ],
     },
     // student routes
     {
         path: "/",
         children: [
-            { path: PATH.HOME, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><StudentDashboard /></Sidebar>)} /> },
-            { path: PATH.EXAMS, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamList /></Sidebar>)} /> },
-            { path: PATH.EXAMS_TECHNOLOGY, element: <RoleBasedRoute roles={[roles.STUDENT]} element={(<Sidebar><ExamBoard /></Sidebar>)} /> },
-            { path: PATH.EXAM_RESULT, element: <RoleBasedRoute roles={[roles.STUDENT, roles.EXAMINER]} element={(<Sidebar><ExamResult /></Sidebar>)} /> },
+            {
+                path: PATH.HOME,
+                element: (
+                    <RoleBasedRoute
+                        roles={[roles.STUDENT]}
+                        element={
+                            <Sidebar>
+                                <StudentDashboard />
+                            </Sidebar>
+                        }
+                    />
+                ),
+            },
+            {
+                path: PATH.EXAMS,
+                element: (
+                    <RoleBasedRoute
+                        roles={[roles.STUDENT]}
+                        element={
+                            <Sidebar>
+                                <ExamList />
+                            </Sidebar>
+                        }
+                    />
+                ),
+            },
+            {
+                path: PATH.EXAMS_TECHNOLOGY,
+                element: (
+                    <RoleBasedRoute
+                        roles={[roles.STUDENT]}
+                        element={
+                            <Sidebar>
+                                <ExamBoard />
+                            </Sidebar>
+                        }
+                    />
+                ),
+            },
+            {
+                path: PATH.EXAM_RESULT,
+                element: (
+                    <RoleBasedRoute
+                        roles={[roles.STUDENT, roles.EXAMINER]}
+                        element={
+                            <Sidebar>
+                                <ExamResult />
+                            </Sidebar>
+                        }
+                    />
+                ),
+            },
         ],
     },
     // error routes

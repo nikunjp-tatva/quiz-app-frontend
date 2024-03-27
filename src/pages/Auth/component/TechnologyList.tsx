@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Typography from '@mui/material/Typography'
+import React, { useEffect, useState } from "react";
+import Typography from "@mui/material/Typography";
 
-import { FormInputDropdown } from '../../../common/form-component/FormInputDropdown';
-import HelperText from '../../../common/HelperText';
-import { getTechnologiesList } from '../../../services/technology.service';
+import { FormInputDropdown } from "../../../common/form-component/FormInputDropdown";
+import HelperText from "../../../common/HelperText";
+import { getTechnologiesList } from "../../../services/technology.service";
 
 export default function TechnologyList({ control, errors }: any) {
     const [technologiesList, setTechnologiesList] = useState<object[]>([]);
@@ -15,7 +15,7 @@ export default function TechnologyList({ control, errors }: any) {
 
     useEffect(() => {
         fetchTechnologyList();
-    }, [])
+    }, []);
 
     return (
         <>
@@ -27,16 +27,22 @@ export default function TechnologyList({ control, errors }: any) {
                 mb="5px"
                 mt="25px"
                 sx={{
-                    '&::after': {
+                    "&::after": {
                         content: "' *'",
-                        color: 'red',
+                        color: "red",
                     },
                 }}
             >
                 Technologies
             </Typography>
-            <FormInputDropdown name="technologies" control={control} values={technologiesList} />
-            {errors.technologies && <HelperText isError={true} message={errors.technologies.message} />}
+            <FormInputDropdown
+                name="technologies"
+                control={control}
+                values={technologiesList}
+            />
+            {errors.technologies && (
+                <HelperText isError={true} message={errors.technologies.message} />
+            )}
         </>
-    )
+    );
 }

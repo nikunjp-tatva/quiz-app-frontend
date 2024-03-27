@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import { FormInputText } from "../../../common/form-component/FormInputText";
 import { FormInputRadio } from "../../../common/form-component/FormInputRadio";
@@ -35,20 +35,24 @@ const RegisterForm = () => {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
-    const resolver = useYupValidationResolver(registerValidationSchema)
+    const resolver = useYupValidationResolver(registerValidationSchema);
 
-    const { handleSubmit, reset, control, watch, formState: { errors } } = useForm<IRegisterFormInput>(
-        {
-            defaultValues,
-            resolver
-        },
-    );
+    const {
+        handleSubmit,
+        reset,
+        control,
+        watch,
+        formState: { errors },
+    } = useForm<IRegisterFormInput>({
+        defaultValues,
+        resolver,
+    });
 
     const role = watch("role");
 
     const onSubmit = async (data: IRegisterFormInput) => {
         try {
-            setError('');
+            setError("");
             setLoading(true);
             const userDetails = await register(data);
 
@@ -61,15 +65,20 @@ const RegisterForm = () => {
         } catch (error: any) {
             setLoading(false);
             console.log({ error: error });
-            if (error?.response?.status === 400) setError(error?.response?.data?.message);
+            if (error?.response?.status === 400)
+                setError(error?.response?.data?.message);
             else setError("Something went wrong. Please try again later.");
         }
     };
 
     return (
-
         <Box>
-            {error && <ErrorMessage message={error} style={{ padding: 0, paddingBottom: 2, marginTop: -2 }} />}
+            {error && (
+                <ErrorMessage
+                    message={error}
+                    style={{ padding: 0, paddingBottom: 2, marginTop: -2 }}
+                />
+            )}
             <Typography fontWeight="400" variant="h4" textAlign="center" mb={1}>
                 Register
             </Typography>
@@ -81,9 +90,9 @@ const RegisterForm = () => {
                     htmlFor="name"
                     mb="5px"
                     sx={{
-                        '&::after': {
+                        "&::after": {
                             content: "' *'",
-                            color: 'red',
+                            color: "red",
                         },
                     }}
                 >
@@ -99,9 +108,9 @@ const RegisterForm = () => {
                     mb="5px"
                     mt="25px"
                     sx={{
-                        '&::after': {
+                        "&::after": {
                             content: "' *'",
-                            color: 'red',
+                            color: "red",
                         },
                     }}
                 >
@@ -117,9 +126,9 @@ const RegisterForm = () => {
                     mb="5px"
                     mt="25px"
                     sx={{
-                        '&::after': {
+                        "&::after": {
                             content: "' *'",
-                            color: 'red',
+                            color: "red",
                         },
                     }}
                 >
@@ -135,9 +144,9 @@ const RegisterForm = () => {
                     mb="5px"
                     mt="25px"
                     sx={{
-                        '&::after': {
+                        "&::after": {
                             content: "' *'",
-                            color: 'red',
+                            color: "red",
                         },
                     }}
                 >
@@ -145,7 +154,9 @@ const RegisterForm = () => {
                 </Typography>
                 <FormInputRadio name="role" control={control} options={USER_ROLES} />
 
-                {role === "user" && <TechnologyList control={control} errors={errors} />}
+                {role === "user" && (
+                    <TechnologyList control={control} errors={errors} />
+                )}
             </Stack>
 
             <Button
@@ -153,12 +164,18 @@ const RegisterForm = () => {
                 variant="contained"
                 size="small"
                 fullWidth
-                sx={{ marginBottom: '5px' }}
+                sx={{ marginBottom: "5px" }}
                 disabled={loading}
             >
                 Sign Up
             </Button>
-            <Button onClick={() => reset()} variant="outlined" size="small" fullWidth sx={{ marginTop: '5px' }}>
+            <Button
+                onClick={() => reset()}
+                variant="outlined"
+                size="small"
+                fullWidth
+                sx={{ marginTop: "5px" }}
+            >
                 Reset
             </Button>
         </Box>

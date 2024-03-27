@@ -1,20 +1,19 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
-import Toolbar from '@mui/material/Toolbar';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import CssBaseline from "@mui/material/CssBaseline";
+import List from "@mui/material/List";
+import Toolbar from "@mui/material/Toolbar";
 
-import Header from '../header/Header';
-import SidebarItems from './SidebarItems';
-import { COLOR } from '../../../config/config';
+import Header from "../header/Header";
+import SidebarItems from "./SidebarItems";
+import { COLOR } from "../../../config/config";
 
 const drawerWidth = 205;
 
 export default function Sidebar({ children }: any) {
-
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: "flex" }}>
             <CssBaseline />
             <Header />
             <Drawer
@@ -22,22 +21,25 @@ export default function Sidebar({ children }: any) {
                 sx={{
                     width: drawerWidth,
                     flexShrink: 0,
-                    '& .MuiDrawer-paper': {
+                    "& .MuiDrawer-paper": {
                         width: drawerWidth,
-                        boxSizing: 'border-box',
+                        boxSizing: "border-box",
                         backgroundColor: COLOR.BLUE,
-                        color: "#fff"
+                        color: "#fff",
                     },
                 }}
             >
                 <Toolbar />
-                <Box sx={{ overflow: 'auto' }}>
+                <Box sx={{ overflow: "auto" }}>
                     <List>
                         <SidebarItems />
                     </List>
                 </Box>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, paddingTop: 10, paddingLeft: 1 }}>
+            <Box
+                component="main"
+                sx={{ flexGrow: 1, paddingTop: 10, paddingLeft: 1 }}
+            >
                 {children}
             </Box>
         </Box>

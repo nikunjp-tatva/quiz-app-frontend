@@ -7,7 +7,7 @@ import { FormInputProps } from "./FormInputProps";
 export const FormInputDropdown: React.FC<FormInputProps> = ({
     name,
     control,
-    values
+    values,
 }) => {
     const generateSingleOptions = () => {
         return values?.map((option: any) => {
