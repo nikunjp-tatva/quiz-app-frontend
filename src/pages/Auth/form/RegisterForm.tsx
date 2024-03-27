@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { FormInputText } from "../../../common/form-component/FormInputText";
 import { FormInputRadio } from "../../../common/form-component/FormInputRadio";
-import HelperText from "../../../common/HelperText";
 import { registerValidationSchema } from "../validationSchema/registerSchema";
 import { useYupValidationResolver } from "../../../helpers/yupValidation.helper";
 import { register, setUserSession } from "../../../services/auth.service";
 import TechnologyList from "../component/TechnologyList";
 import roles, { USER_ROLES } from "../../../config/Roles";
 import { PATH } from "../../../config/config";
+import ErrorMessage from "../../../common/ErrorMessage";
 
 interface IRegisterFormInput {
     name: string;
@@ -69,6 +69,10 @@ const RegisterForm = () => {
     return (
 
         <Box>
+            {error && <ErrorMessage message={error} style={{ padding: 0, paddingBottom: 2, marginTop: -2 }} />}
+            <Typography fontWeight="400" variant="h4" textAlign="center" mb={1}>
+                Register
+            </Typography>
             <Stack mb={3}>
                 <Typography
                     variant="subtitle1"
@@ -139,12 +143,10 @@ const RegisterForm = () => {
                 >
                     Role
                 </Typography>
-                <FormInputRadio name="role" control={control} options={USER_ROLES}/>
+                <FormInputRadio name="role" control={control} options={USER_ROLES} />
 
                 {role === "user" && <TechnologyList control={control} errors={errors} />}
             </Stack>
-
-            {error && <HelperText isError={true} message={error} style={{ 'fontSize': '1rem' }} />}<br />
 
             <Button
                 onClick={handleSubmit(onSubmit)}

@@ -13,7 +13,7 @@ const Register = () => {
     if (userToken) {
         return <Navigate to={PATH.INDEX} />;
     }
-    
+
     return (
         <PageContainer title="Register" description="this is Register page">
             <Box
@@ -50,9 +50,6 @@ const Register = () => {
                             elevation={9}
                             sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
                         >
-                            <Typography fontWeight="400" variant="h4" textAlign="center" mb={1}>
-                                Register
-                            </Typography>
                             <RegisterForm />
                             <Stack direction="row" justifyContent="center" spacing={1} mt={3}>
                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
@@ -65,6 +62,7 @@ const Register = () => {
                                     sx={{
                                         textDecoration: "none",
                                         color: "primary.main",
+                                        padding: "5px 7px"
                                     }}
                                 >
                                     Sign In

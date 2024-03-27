@@ -50,14 +50,6 @@ const Login = () => {
                             elevation={9}
                             sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
                         >
-                            <Typography
-                                fontWeight="400"
-                                variant="h4"
-                                textAlign="center"
-                                mb={1}
-                            >
-                                Login
-                            </Typography>
                             <LoginForm />
                             <Stack direction="row" spacing={1} justifyContent="center" mt={3}>
                                 <Typography color="textSecondary" variant="h6" fontWeight="500">
@@ -70,6 +62,7 @@ const Login = () => {
                                     sx={{
                                         textDecoration: "none",
                                         color: "primary.main",
+                                        padding: "5px 7px"
                                     }}
                                 >
                                     Create an account

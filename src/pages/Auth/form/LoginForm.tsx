@@ -7,9 +7,9 @@ import { FormInputText } from "../../../common/form-component/FormInputText";
 import { useYupValidationResolver } from "../../../helpers/yupValidation.helper";
 import { loginValidationSchema } from "../validationSchema/loginSchema";
 import { login, setUserSession } from "../../../services/auth.service";
-import HelperText from "../../../common/HelperText";
 import roles from "../../../config/Roles";
 import { PATH } from "../../../config/config";
+import ErrorMessage from "../../../common/ErrorMessage";
 
 interface ILoginFormInput {
     email: string;
@@ -58,6 +58,17 @@ const LoginForm = () => {
 
     return (
         <Box>
+            {error && <ErrorMessage message={error} style={{ padding: 0, paddingBottom: 2, marginTop: -2 }} />}
+
+            <Typography
+                fontWeight="400"
+                variant="h4"
+                textAlign="center"
+                mb={-2}
+            >
+                Login
+            </Typography>
+
             <Stack mb={3}>
                 <Typography
                     variant="subtitle1"
@@ -95,8 +106,6 @@ const LoginForm = () => {
                 </Typography>
                 <FormInputText name="password" control={control} type="password" clearError={() => setError('')} />
             </Stack>
-
-            {error && <HelperText isError={true} message={error} style={{ 'fontSize': '1rem' }} />}<br />
 
             <Button
                 onClick={handleSubmit(onSubmit)}

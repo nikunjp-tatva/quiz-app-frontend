@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material'
 
-export default function ErrorMessage({ message }: Readonly<{ message: string }>) {
+export default function ErrorMessage({ message, style }: Readonly<{ message: string; style?: object }>) {
     return (
-        <Box component="section" sx={{ padding: "10px" }}>
+        <Box component="section" sx={{ padding: "10px", ...style }}>
             <Typography
                 fontWeight={600}
                 variant="subtitle1"
